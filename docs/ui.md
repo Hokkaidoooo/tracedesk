@@ -54,6 +54,8 @@ HTTP 字段与状态以 [接口契约](api-contract.md) 为准。界面不重复
 
 ## 验证入口
 
+[工作台](../assets/workspace.png)、[申请提交后的回执](../assets/refund-receipt.png)、[手机界面](../assets/mobile.png) 和 [评测页面](../assets/evaluation.png) 为真实 CI 浏览器截图，来源见 [截图记录](../assets/README.md)。
+
 类型检查与构建命令覆盖所有 TypeScript 模块。依赖审计应使用支持安全审计端点的 registry；官方 registry 可用上述命令直接指定，无须改全局 npm 配置。
 
 后端就绪后，界面验收覆盖以下真实操作：创建会话、查阅退货政策、读取本人订单、拒绝越权订单访问、准备申请、取消、确认并核对回执、重试失败请求、切换会话和查看评测报告。同步检查 1440 px、768 px、320 px 下的分区、长文本和横向溢出。运行前端开发服务本身不代表这些操作已通过。

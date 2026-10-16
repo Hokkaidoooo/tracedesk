@@ -1,6 +1,6 @@
 # 工程验证
 
-[GitHub Actions](https://github.com/Hokkaidoooo/tracedesk/actions/workflows/ci.yml) 会执行构建、行为回归、安装包验证和浏览器测试。首轮完整记录见 [CI 38847857143](https://github.com/Hokkaidoooo/tracedesk/actions/runs/38847857143)；每次提交的运行与产物均可在 Actions 中查询。
+[GitHub Actions](https://github.com/Hokkaidoooo/tracedesk/actions/workflows/ci.yml) 会执行构建、行为回归、安装包验证和浏览器测试。下表对应核心提交 `762c189` 的 [CI 38850619410](https://github.com/Hokkaidoooo/tracedesk/actions/runs/38850619410)；后续每次提交的运行与产物均可在 Actions 中查询。
 
 ## 已执行范围
 

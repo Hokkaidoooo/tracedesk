@@ -4,6 +4,10 @@
 
 带知识来源、工具执行记录和确认流程的客服 Agent。可以查询商店政策和订单，核对退货条件，在用户确认后创建退款申请。
 
+![TraceDesk 实际运行界面：订单、待确认申请与政策来源](assets/workspace.png)
+
+[申请回执](assets/refund-receipt.png) · [手机界面](assets/mobile.png) · [评测页面](assets/evaluation.png)
+
 项目同时提供两种明确区分的运行方式：`extractive` 使用中文检索和原文摘录，无需模型密钥；`llm` 使用支持 function calling 的聊天模型选择工具。模型故障会显式报错，不会切换到另一种模式。
 
 所有订单和知识均为自行构造的演示数据。申请写入本地 SQLite 账本，不接入真实支付或商家系统。
