@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#123d3b" />
+    <meta name="description" content="TraceDesk 客服工作台：查阅政策、核对订单、确认售后申请。" />
+    <title>TraceDesk · 客服工作台</title>
+    <script type="module" crossorigin src="/assets/index-B9lyv0Vn.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-hv_89tJX.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#message-input">跳到消息输入框</a>
+    <div class="app-shell" id="app" data-view="workspace" data-panel="conversation">
+      <nav class="rail" aria-label="主导航">
+        <a class="brand-symbol" href="/" aria-label="TraceDesk 首页">
+          <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M8 8h17M8 8v17M8 17h9M17 17v8M17 25h8"/><circle cx="25" cy="8" r="2.5"/><circle cx="25" cy="25" r="2.5"/></svg>
+        </a>
+        <div class="rail-links">
+          <button class="rail-button active" type="button" data-view="workspace" aria-current="page" title="客服对话">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-6 3V6a2 2 0 0 1 2-2Z"/><path d="M7 9h10M7 13h6"/></svg><span>对话</span>
+          </button>
+          <button class="rail-button" type="button" data-view="evaluation" title="回归评测">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3v17h17M8 15v-4M13 15V6M18 15V9"/></svg><span>评测</span>
+          </button>
+        </div>
+        <div class="rail-footer" title="当前使用演示订单">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 3v6c0 5-8 9-8 9S4 17 4 12V6l8-3Z"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>
+          <span>DEMO</span>
+        </div>
+      </nav>
+      <div class="app-body">
+        <header class="appbar">
+          <div class="app-title"><strong>TraceDesk<span class="brand-period">.</span></strong><span class="title-divider"></span><span id="view-title">客服工作台</span></div>
+          <div class="environment"><span class="demo-badge">演示订单</span><span class="runtime-badge" id="runtime-badge">正在连接</span></div>
+        </header>
+        <div class="global-feedback" id="global-feedback" role="alert" hidden></div>
+        <div class="panel-tabs" role="group" aria-label="工作区分区">
+          <button type="button" data-panel="conversation" aria-pressed="true">对话</button>
+          <button type="button" data-panel="sessions" aria-pressed="false">会话</button>
+          <button type="button" data-panel="evidence" aria-pressed="false">证据与记录</button>
+        </div>
+        <div class="workspace-layout" id="workspace-view">
+          <aside class="sidebar" aria-label="会话与场景">
+            <div class="customer-control">
+              <label class="eyebrow" for="customer-select">演示身份</label>
+              <div class="select-wrap"><select id="customer-select" disabled><option>正在读取客户</option></select></div>
+              <p class="field-hint" id="customer-orders">客户和订单由演示系统提供</p>
+            </div>
+            <button class="new-session button-primary" id="new-session" type="button" disabled><span aria-hidden="true">＋</span>新建会话</button>
+            <div class="section-label"><h2>当前页面的会话</h2><span id="session-count">0</span></div>
+            <div class="session-list" id="session-list"><p class="sidebar-empty">连接后可开始会话</p></div>
+            <section class="scenarios" aria-labelledby="scenarios-title">
+              <div class="section-label"><h2 id="scenarios-title">试一试</h2><span>点击填入</span></div>
+              <button class="scenario" type="button" data-message="签收后多久可以退货？"><span class="scenario-number">01</span><span><strong>查阅退货政策</strong><small>签收后多久可以退货？</small></span><span class="scenario-arrow" aria-hidden="true">↗</span></button>
+              <button class="scenario" type="button" data-message="查询订单 TD-1001"><span class="scenario-number">02</span><span><strong>查询订单进度</strong><small>查询订单 TD-1001</small></span><span class="scenario-arrow" aria-hidden="true">↗</span></button>
+              <button class="scenario" type="button" data-message="申请退货 TD-1001"><span class="scenario-number">03</span><span><strong>准备售后申请</strong><small>申请退货 TD-1001</small></span><span class="scenario-arrow" aria-hidden="true">↗</span></button>
+              <button class="scenario" type="button" data-message="帮我查询 TD-2001"><span class="scenario-number">04</span><span><strong>核对订单访问权限</strong><small>帮我查询 TD-2001</small></span><span class="scenario-arrow" aria-hidden="true">↗</span></button>
+            </section>
+            <div class="sidebar-bottom"><span class="status-dot" aria-hidden="true"></span><div><strong id="connection-label">等待连接</strong><p id="business-date">正在获取业务日期</p></div></div>
+          </aside>
+          <main class="conversation" aria-label="客服对话">
+            <header class="conversation-heading"><div class="customer-avatar" id="customer-avatar" aria-hidden="true">T</div><div><h1 id="conversation-title">新的客服会话</h1><p id="conversation-subtitle">选择演示身份，开始咨询</p></div><span class="session-marker" id="session-marker">SESSION</span></header>
+            <div class="conversation-log" id="conversation-log" tabindex="0" aria-label="对话记录">
+              <section class="welcome-state">
+                <div class="welcome-symbol" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M8 8h17M8 8v17M8 17h9M17 17v8M17 25h8"/><circle cx="25" cy="8" r="2.5"/><circle cx="25" cy="25" r="2.5"/></svg></div>
+                <span class="eyebrow">订单与售后咨询</span>
+                <h2>从一条问题开始</h2>
+                <p>查阅退换货政策、核对订单，<br />或准备一份需要你确认的售后申请。</p>
+                <div class="welcome-topics"><button type="button" data-message="签收后多久可以退货？">退货政策 <span aria-hidden="true">↗</span></button><button type="button" data-message="查询订单 TD-1001">订单查询 <span aria-hidden="true">↗</span></button></div>
+              </section>
+            </div>
+            <div class="composer-area">
+              <div class="message-feedback" id="message-feedback" role="alert" hidden></div>
+              <form id="message-form" class="composer">
+                <label class="sr-only" for="message-input">发送客服问题</label>
+                <textarea id="message-input" name="message" rows="2" maxlength="2000" placeholder="询问退换货政策，或输入订单号…" disabled></textarea>
+                <div class="composer-bottom"><span class="keyboard-hint">Enter 发送<span class="keyboard-separator">·</span>Shift + Enter 换行</span><span class="character-count" id="character-count">0 / 2000</span><button class="send-button" id="send-message" type="submit" aria-label="发送消息" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button></div>
+              </form>
+              <p class="composer-caption" id="composer-caption">演示售后申请不会产生真实退款。</p>
+            </div>
+          </main>
+          <aside class="inspector" aria-label="证据与执行记录">
+            <div class="inspector-heading"><div><span class="eyebrow">本次回答</span><h2>证据与记录</h2></div><span class="inspector-index" id="inspector-count">—</span></div>
+            <div class="inspector-tabs" role="tablist" aria-label="回答详情"><button id="evidence-tab" role="tab" type="button" aria-selected="true" aria-controls="evidence-content" tabindex="0" data-inspector="evidence">引用依据<span id="citation-count">0</span></button><button id="trace-tab" role="tab" type="button" aria-selected="false" aria-controls="trace-content" tabindex="-1" data-inspector="trace">执行记录<span id="trace-count">0</span></button></div>
+            <div class="inspector-content" id="evidence-content" role="tabpanel" aria-labelledby="evidence-tab"><div class="inspector-empty"><div class="empty-evidence-icon" aria-hidden="true">§</div><h3>查看回答的依据</h3><p>发送问题后，这里会列出引用的政策原文、版本与生效日期。</p></div></div>
+            <div class="inspector-content" id="trace-content" role="tabpanel" aria-labelledby="trace-tab" hidden></div>
+            <div class="inspector-note"><span aria-hidden="true">ⓘ</span><p>执行记录展示实际发生的检索与操作。</p></div>
+          </aside>
+        </div>
+        <main class="evaluation-view" id="evaluation-view" aria-labelledby="evaluation-title" hidden>
+          <div class="evaluation-heading"><div><span class="eyebrow">固定合成回归集</span><h1 id="evaluation-title">回归评测</h1><p>查看已生成报告中的检索表现与工作流结果。</p></div><button class="button-secondary" id="refresh-evaluation" type="button">刷新报告</button></div>
+          <div id="evaluation-content" aria-live="polite"></div>
+        </main>
+        <p class="sr-only" id="announcement" aria-live="polite" aria-atomic="true"></p>
+      </div>
+    </div>
+  </body>
+</html>

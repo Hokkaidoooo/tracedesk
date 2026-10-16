@@ -1,0 +1,11 @@
+* text=auto
+*.py text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.jsonl text eol=lf
+*.yml text eol=lf
+*.ts text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.svg text eol=lf
+*.png binary

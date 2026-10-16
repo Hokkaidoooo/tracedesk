@@ -1,0 +1,4859 @@
+{
+  "generated_at": "2026-10-16T03:49:29.392461+00:00",
+  "scope": "固定合成知识上的检索消融与提取式工作流回归；不代表真实客户评价或线上模型准确率。",
+  "reference_time": "2026-10-16T08:00:00+00:00",
+  "dataset_sha256": "c38234498c6d20f66bb5bf09b08be7aa344e465e2937241346bc39284f89bc51",
+  "knowledge_sha256": "0234aa90160b34d6b625fe6a062253705f9053256adbcbf265b5a4c8c872e255",
+  "configuration": {
+    "k1": 1.2,
+    "b": 0.75,
+    "rrf_k": 60,
+    "min_query_coverage": 0.25,
+    "min_ngram_score": 0.05,
+    "max_query_characters": 2000
+  },
+  "retrieval": {
+    "bm25": {
+      "queries": 60,
+      "answerable": 48,
+      "unanswerable": 12,
+      "recall_at_3": 0.90625,
+      "mrr": 0.9027777777777778,
+      "no_answer_accuracy": 1,
+      "latency_ms_p50": 0.6688000000000001,
+      "cases": [
+        {
+          "id": "r001",
+          "query": "退货退款需要在签收几天内申请",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "returns@2"
+          ],
+          "category": "returns",
+          "retrieved_source_ids": [
+            "returns@2",
+            "cancellation@1"
+          ],
+          "scores": [
+            {
+              "source_id": "returns@2",
+              "score": 9.882952209419265,
+              "bm25_score": 9.882952209419265,
+              "ngram_score": 0.25669930542305286
+            },
+            {
+              "source_id": "cancellation@1",
+              "score": 4.9068655551770615,
+              "bm25_score": 4.9068655551770615,
+              "ngram_score": 0.09251028542520802
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 1.0938
+        },
+        {
+          "id": "r002",
+          "query": "已经收到键盘了，现在不想要了能退钱吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "returns@2"
+          ],
+          "category": "paraphrase",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": 0.0,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.8294
+        },
+        {
+          "id": "r003",
+          "query": "下载的数字商品支持退货吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "returns@2"
+          ],
+          "category": "policy-exclusion",
+          "retrieved_source_ids": [
+            "returns@2"
+          ],
+          "scores": [
+            {
+              "source_id": "returns@2",
+              "score": 8.25756561037079,
+              "bm25_score": 8.25756561037079,
+              "ngram_score": 0.19093745168288379
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.721
+        },
+        {
+          "id": "r004",
+          "query": "定制商品可以申请退款吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "returns@2"
+          ],
+          "category": "policy-exclusion",
+          "retrieved_source_ids": [
+            "returns@2",
+            "refund-progress@1",
+            "coupons@1"
+          ],
+          "scores": [
+            {
+              "source_id": "returns@2",
+              "score": 9.137225166846479,
+              "bm25_score": 9.137225166846479,
+              "ngram_score": 0.35506103061020255
+            },
+            {
+              "source_id": "refund-progress@1",
+              "score": 3.40087190132018,
+              "bm25_score": 3.40087190132018,
+              "ngram_score": 0.21630055970230938
+            },
+            {
+              "source_id": "coupons@1",
+              "score": 2.807360734068342,
+              "bm25_score": 2.807360734068342,
+              "ngram_score": 0.08077270754888725
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.6535
+        },
+        {
+          "id": "r005",
+          "query": "确认申请就一定打款了吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "returns@2",
+            "refund-progress@1"
+          ],
+          "category": "capability-boundary",
+          "retrieved_source_ids": [
+            "returns@2",
+            "warranty@1",
+            "invoice@1"
+          ],
+          "scores": [
+            {
+              "source_id": "returns@2",
+              "score": 4.464324737557378,
+              "bm25_score": 4.464324737557378,
+              "ngram_score": 0.13684126526982027
+            },
+            {
+              "source_id": "warranty@1",
+              "score": 1.8847168311822053,
+              "bm25_score": 1.8847168311822053,
+              "ngram_score": 0.0742520349725491
+            },
+            {
+              "source_id": "invoice@1",
+              "score": 1.858630152099521,
+              "bm25_score": 1.858630152099521,
+              "ngram_score": 0.06607761754829927
+            }
+          ],
+          "recall_at_3": 0.5,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.6811
+        },
+        {
+          "id": "r006",
+          "query": "签收后八天才想退货还能申请吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "returns@2"
+          ],
+          "category": "returns",
+          "retrieved_source_ids": [
+            "returns@2",
+            "cancellation@1"
+          ],
+          "scores": [
+            {
+              "source_id": "returns@2",
+              "score": 7.085055538046705,
+              "bm25_score": 7.085055538046705,
+              "ngram_score": 0.2074315252115062
+            },
+            {
+              "source_id": "cancellation@1",
+              "score": 5.162999603541012,
+              "bm25_score": 5.162999603541012,
+              "ngram_score": 0.0823593927333153
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.7933
+        },
+        {
+          "id": "r007",
+          "query": "退货申请期限是多少天",
+          "as_of": "2025-12-31",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "returns@1"
+          ],
+          "category": "temporal-boundary",
+          "retrieved_source_ids": [
+            "returns@1",
+            "warranty@1",
+            "cancellation@1"
+          ],
+          "scores": [
+            {
+              "source_id": "returns@1",
+              "score": 9.716200826298008,
+              "bm25_score": 9.716200826298008,
+              "ngram_score": 0.27265110913888446
+            },
+            {
+              "source_id": "warranty@1",
+              "score": 2.8061920608950213,
+              "bm25_score": 2.8061920608950213,
+              "ngram_score": 0.07077758706429081
+            },
+            {
+              "source_id": "cancellation@1",
+              "score": 2.321188772439198,
+              "bm25_score": 2.321188772439198,
+              "ngram_score": 0.047560498057609986
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.6679
+        },
+        {
+          "id": "r008",
+          "query": "退货申请期限是多少天",
+          "as_of": "2026-01-01",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "returns@2"
+          ],
+          "category": "temporal-boundary",
+          "retrieved_source_ids": [
+            "returns@2",
+            "warranty@1",
+            "cancellation@1"
+          ],
+          "scores": [
+            {
+              "source_id": "returns@2",
+              "score": 9.716200826298008,
+              "bm25_score": 9.716200826298008,
+              "ngram_score": 0.2732592101591294
+            },
+            {
+              "source_id": "warranty@1",
+              "score": 2.8061920608950213,
+              "bm25_score": 2.8061920608950213,
+              "ngram_score": 0.07077758706429081
+            },
+            {
+              "source_id": "cancellation@1",
+              "score": 2.321188772439198,
+              "bm25_score": 2.321188772439198,
+              "ngram_score": 0.047560498057609986
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.6795
+        },
+        {
+          "id": "r009",
+          "query": "退货申请期限是多少天",
+          "as_of": "2024-12-31",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [],
+          "category": "before-coverage",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": null,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": true,
+          "latency_ms": 0.026
+        },
+        {
+          "id": "r010",
+          "query": "退货申请期限是多少天",
+          "as_of": "2025-01-01",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "returns@1"
+          ],
+          "category": "temporal-boundary",
+          "retrieved_source_ids": [
+            "returns@1",
+            "warranty@1",
+            "cancellation@1"
+          ],
+          "scores": [
+            {
+              "source_id": "returns@1",
+              "score": 9.716200826298008,
+              "bm25_score": 9.716200826298008,
+              "ngram_score": 0.27265110913888446
+            },
+            {
+              "source_id": "warranty@1",
+              "score": 2.8061920608950213,
+              "bm25_score": 2.8061920608950213,
+              "ngram_score": 0.07077758706429081
+            },
+            {
+              "source_id": "cancellation@1",
+              "score": 2.321188772439198,
+              "bm25_score": 2.321188772439198,
+              "ngram_score": 0.047560498057609986
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.6697
+        },
+        {
+          "id": "r011",
+          "query": "现在还是14天退货政策吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "returns@2"
+          ],
+          "category": "outdated-premise",
+          "retrieved_source_ids": [
+            "returns@2"
+          ],
+          "scores": [
+            {
+              "source_id": "returns@2",
+              "score": 4.673776596566148,
+              "bm25_score": 4.673776596566148,
+              "ngram_score": 0.12021777031677199
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.5951
+        },
+        {
+          "id": "r012",
+          "query": "退款申请提交之后怎么查进度",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "refund-progress@1"
+          ],
+          "category": "refund-progress",
+          "retrieved_source_ids": [
+            "refund-progress@1",
+            "returns@2",
+            "coupons@1"
+          ],
+          "scores": [
+            {
+              "source_id": "refund-progress@1",
+              "score": 10.984494509071087,
+              "bm25_score": 10.984494509071087,
+              "ngram_score": 0.32364572056602203
+            },
+            {
+              "source_id": "returns@2",
+              "score": 6.818700094649815,
+              "bm25_score": 6.818700094649815,
+              "ngram_score": 0.28403871454864643
+            },
+            {
+              "source_id": "coupons@1",
+              "score": 4.484311700695783,
+              "bm25_score": 4.484311700695783,
+              "ngram_score": 0.09484492397105228
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.7321
+        },
+        {
+          "id": "r013",
+          "query": "钱什么时候到账，能查到原路退回时间吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "refund-progress@1"
+          ],
+          "category": "capability-boundary",
+          "retrieved_source_ids": [
+            "refund-progress@1",
+            "payment@1"
+          ],
+          "scores": [
+            {
+              "source_id": "refund-progress@1",
+              "score": 11.186286591691042,
+              "bm25_score": 11.186286591691042,
+              "ngram_score": 0.18991754222186236
+            },
+            {
+              "source_id": "payment@1",
+              "score": 6.389526934019767,
+              "bm25_score": 6.389526934019767,
+              "ngram_score": 0.10330784087271494
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.7143
+        },
+        {
+          "id": "r014",
+          "query": "submitted 是退款成功的意思吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "refund-progress@1"
+          ],
+          "category": "refund-progress",
+          "retrieved_source_ids": [
+            "refund-progress@1",
+            "cancellation@1"
+          ],
+          "scores": [
+            {
+              "source_id": "refund-progress@1",
+              "score": 8.263502488069648,
+              "bm25_score": 8.263502488069648,
+              "ngram_score": 0.26249456972396895
+            },
+            {
+              "source_id": "cancellation@1",
+              "score": 2.8418108311018138,
+              "bm25_score": 2.8418108311018138,
+              "ngram_score": 0.034988986796853076
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.758
+        },
+        {
+          "id": "r015",
+          "query": "多久可以发货",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "shipping@1"
+          ],
+          "category": "shipping",
+          "retrieved_source_ids": [
+            "address-change@1",
+            "cancellation@1",
+            "shipping@1"
+          ],
+          "scores": [
+            {
+              "source_id": "address-change@1",
+              "score": 2.429990068571914,
+              "bm25_score": 2.429990068571914,
+              "ngram_score": 0.16737983495058367
+            },
+            {
+              "source_id": "cancellation@1",
+              "score": 2.4120719901505896,
+              "bm25_score": 2.4120719901505896,
+              "ngram_score": 0.1493256954438407
+            },
+            {
+              "source_id": "shipping@1",
+              "score": 2.355620473338376,
+              "bm25_score": 2.355620473338376,
+              "ngram_score": 0.21721718371085313
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 0.3333333333333333,
+          "correct_no_answer": null,
+          "latency_ms": 0.4773
+        },
+        {
+          "id": "r016",
+          "query": "快递一直停着不更新该找谁",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "shipping@1"
+          ],
+          "category": "paraphrase",
+          "retrieved_source_ids": [
+            "shipping@1"
+          ],
+          "scores": [
+            {
+              "source_id": "shipping@1",
+              "score": 6.578206571083236,
+              "bm25_score": 6.578206571083236,
+              "ngram_score": 0.1094200136911632
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.7266
+        },
+        {
+          "id": "r017",
+          "query": "物流轨迹和运单号在哪里核对",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "shipping@1"
+          ],
+          "category": "shipping",
+          "retrieved_source_ids": [
+            "shipping@1",
+            "delivery-proof@1"
+          ],
+          "scores": [
+            {
+              "source_id": "shipping@1",
+              "score": 13.748414026567636,
+              "bm25_score": 13.748414026567636,
+              "ngram_score": 0.234600401118232
+            },
+            {
+              "source_id": "delivery-proof@1",
+              "score": 3.6450842109668704,
+              "bm25_score": 3.6450842109668704,
+              "ngram_score": 0.0878942539626171
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.7676
+        },
+        {
+          "id": "r018",
+          "query": "包裹寄出来后大概几天到",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "shipping@1"
+          ],
+          "category": "paraphrase",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": 0.0,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.5894
+        },
+        {
+          "id": "r019",
+          "query": "满多少可以包邮",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "shipping-fee@1"
+          ],
+          "category": "shipping-fee",
+          "retrieved_source_ids": [
+            "shipping-fee@1"
+          ],
+          "scores": [
+            {
+              "source_id": "shipping-fee@1",
+              "score": 3.289468885493996,
+              "bm25_score": 3.289468885493996,
+              "ngram_score": 0.09452438952121103
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.4785
+        },
+        {
+          "id": "r020",
+          "query": "退货寄回去邮费谁出",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "shipping-fee@1"
+          ],
+          "category": "paraphrase",
+          "retrieved_source_ids": [
+            "shipping-fee@1"
+          ],
+          "scores": [
+            {
+              "source_id": "shipping-fee@1",
+              "score": 8.98657145399282,
+              "bm25_score": 8.98657145399282,
+              "ngram_score": 0.18659754634704917
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.5681
+        },
+        {
+          "id": "r021",
+          "query": "商品坏了，退货运费能报销吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "shipping-fee@1"
+          ],
+          "category": "shipping-fee",
+          "retrieved_source_ids": [
+            "shipping-fee@1",
+            "returns@2",
+            "invoice@1"
+          ],
+          "scores": [
+            {
+              "source_id": "shipping-fee@1",
+              "score": 12.38384466473286,
+              "bm25_score": 12.38384466473286,
+              "ngram_score": 0.31074944394708337
+            },
+            {
+              "source_id": "returns@2",
+              "score": 3.6297502515189692,
+              "bm25_score": 3.6297502515189692,
+              "ngram_score": 0.16161017610709338
+            },
+            {
+              "source_id": "invoice@1",
+              "score": 2.4792145563530723,
+              "bm25_score": 2.4792145563530723,
+              "ngram_score": 0.0469896481639226
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.7838
+        },
+        {
+          "id": "r022",
+          "query": "公司报销要开发票，需要税号吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "invoice@1"
+          ],
+          "category": "invoice",
+          "retrieved_source_ids": [
+            "invoice@1"
+          ],
+          "scores": [
+            {
+              "source_id": "invoice@1",
+              "score": 10.519578534524847,
+              "bm25_score": 10.519578534524847,
+              "ngram_score": 0.22981573639916544
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.8232
+        },
+        {
+          "id": "r023",
+          "query": "电子票据多久能开好",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "invoice@1"
+          ],
+          "category": "paraphrase",
+          "retrieved_source_ids": [
+            "invoice@1"
+          ],
+          "scores": [
+            {
+              "source_id": "invoice@1",
+              "score": 8.999401166237098,
+              "bm25_score": 8.999401166237098,
+              "ngram_score": 0.1545889941407742
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.6913
+        },
+        {
+          "id": "r024",
+          "query": "我想开增值税专用发票",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "invoice@1"
+          ],
+          "category": "capability-boundary",
+          "retrieved_source_ids": [
+            "invoice@1"
+          ],
+          "scores": [
+            {
+              "source_id": "invoice@1",
+              "score": 15.494231208665958,
+              "bm25_score": 15.494231208665958,
+              "ngram_score": 0.29455242370468165
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.6778
+        },
+        {
+          "id": "r025",
+          "query": "优惠券能叠加使用吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "coupons@1"
+          ],
+          "category": "coupons",
+          "retrieved_source_ids": [
+            "coupons@1"
+          ],
+          "scores": [
+            {
+              "source_id": "coupons@1",
+              "score": 19.98921355646824,
+              "bm25_score": 19.98921355646824,
+              "ngram_score": 0.4687682370095091
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.6203
+        },
+        {
+          "id": "r026",
+          "query": "退款后优惠券会恢复吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "coupons@1"
+          ],
+          "category": "coupons",
+          "retrieved_source_ids": [
+            "coupons@1"
+          ],
+          "scores": [
+            {
+              "source_id": "coupons@1",
+              "score": 12.334102325213552,
+              "bm25_score": 12.334102325213552,
+              "ngram_score": 0.3405433643365493
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.6518
+        },
+        {
+          "id": "r027",
+          "query": "券已经过期还能抵扣吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "coupons@1"
+          ],
+          "category": "paraphrase",
+          "retrieved_source_ids": [
+            "coupons@1"
+          ],
+          "scores": [
+            {
+              "source_id": "coupons@1",
+              "score": 4.774173723706966,
+              "bm25_score": 4.774173723706966,
+              "ngram_score": 0.057136759001147494
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.7039
+        },
+        {
+          "id": "r028",
+          "query": "键盘保修期是多长",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "warranty@1"
+          ],
+          "category": "warranty",
+          "retrieved_source_ids": [
+            "warranty@1"
+          ],
+          "scores": [
+            {
+              "source_id": "warranty@1",
+              "score": 8.017243654380602,
+              "bm25_score": 8.017243654380602,
+              "ngram_score": 0.16796122625382282
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.6169
+        },
+        {
+          "id": "r029",
+          "query": "按键失灵了，能免费维修吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "warranty@1"
+          ],
+          "category": "warranty",
+          "retrieved_source_ids": [
+            "warranty@1"
+          ],
+          "scores": [
+            {
+              "source_id": "warranty@1",
+              "score": 13.19679283453825,
+              "bm25_score": 13.19679283453825,
+              "ngram_score": 0.21975289312581833
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.5078
+        },
+        {
+          "id": "r030",
+          "query": "自行拆机进水还在保修范围内吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "warranty@1"
+          ],
+          "category": "warranty",
+          "retrieved_source_ids": [
+            "warranty@1"
+          ],
+          "scores": [
+            {
+              "source_id": "warranty@1",
+              "score": 14.865656996079288,
+              "bm25_score": 14.865656996079288,
+              "ngram_score": 0.20041003850122335
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.7678
+        },
+        {
+          "id": "r031",
+          "query": "我想找真人客服",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "handoff@1"
+          ],
+          "category": "paraphrase",
+          "retrieved_source_ids": [
+            "handoff@1",
+            "privacy@1",
+            "damaged@1"
+          ],
+          "scores": [
+            {
+              "source_id": "handoff@1",
+              "score": 2.841979735267186,
+              "bm25_score": 2.841979735267186,
+              "ngram_score": 0.15939447974678
+            },
+            {
+              "source_id": "privacy@1",
+              "score": 0.33813651319555843,
+              "bm25_score": 0.33813651319555843,
+              "ngram_score": 0.07893185763321467
+            },
+            {
+              "source_id": "damaged@1",
+              "score": 0.26182252352231644,
+              "bm25_score": 0.26182252352231644,
+              "ngram_score": 0.04246738703182531
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.6713
+        },
+        {
+          "id": "r032",
+          "query": "人工客服几点上班",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "handoff@1"
+          ],
+          "category": "support",
+          "retrieved_source_ids": [
+            "handoff@1",
+            "privacy@1",
+            "damaged@1"
+          ],
+          "scores": [
+            {
+              "source_id": "handoff@1",
+              "score": 2.8927414896357004,
+              "bm25_score": 2.8927414896357004,
+              "ngram_score": 0.2131577589853248
+            },
+            {
+              "source_id": "privacy@1",
+              "score": 0.3697091829964586,
+              "bm25_score": 0.3697091829964586,
+              "ngram_score": 0.08336605432303414
+            },
+            {
+              "source_id": "damaged@1",
+              "score": 0.30726225421438,
+              "bm25_score": 0.30726225421438,
+              "ngram_score": 0.08886093284456215
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.7324
+        },
+        {
+          "id": "r033",
+          "query": "投诉应该怎么处理",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "handoff@1"
+          ],
+          "category": "support",
+          "retrieved_source_ids": [
+            "handoff@1",
+            "damaged@1",
+            "address-change@1"
+          ],
+          "scores": [
+            {
+              "source_id": "handoff@1",
+              "score": 4.26106993398922,
+              "bm25_score": 4.26106993398922,
+              "ngram_score": 0.11859324326360025
+            },
+            {
+              "source_id": "damaged@1",
+              "score": 0.9553841529646342,
+              "bm25_score": 0.9553841529646342,
+              "ngram_score": 0.04190144520185964
+            },
+            {
+              "source_id": "address-change@1",
+              "score": 0.9312911253300286,
+              "bm25_score": 0.9312911253300286,
+              "ngram_score": 0.03766340543237931
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.5608
+        },
+        {
+          "id": "r034",
+          "query": "没发货可以取消订单吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "cancellation@1"
+          ],
+          "category": "orders",
+          "retrieved_source_ids": [
+            "cancellation@1",
+            "address-change@1",
+            "shipping@1"
+          ],
+          "scores": [
+            {
+              "source_id": "cancellation@1",
+              "score": 10.378411400817788,
+              "bm25_score": 10.378411400817788,
+              "ngram_score": 0.46538972242097826
+            },
+            {
+              "source_id": "address-change@1",
+              "score": 2.777242510858034,
+              "bm25_score": 2.777242510858034,
+              "ngram_score": 0.164577763067371
+            },
+            {
+              "source_id": "shipping@1",
+              "score": 2.688983544174696,
+              "bm25_score": 2.688983544174696,
+              "ngram_score": 0.16397115470292753
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.6634
+        },
+        {
+          "id": "r035",
+          "query": "快递发出了还能拦截吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "cancellation@1"
+          ],
+          "category": "orders",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": 0.0,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.6422
+        },
+        {
+          "id": "r036",
+          "query": "收货地址写错了怎么改",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "address-change@1"
+          ],
+          "category": "orders",
+          "retrieved_source_ids": [
+            "address-change@1"
+          ],
+          "scores": [
+            {
+              "source_id": "address-change@1",
+              "score": 15.194622808009058,
+              "bm25_score": 15.194622808009058,
+              "ngram_score": 0.3944070597746429
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.53
+        },
+        {
+          "id": "r037",
+          "query": "已经发货了可以换收件人吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "address-change@1"
+          ],
+          "category": "orders",
+          "retrieved_source_ids": [
+            "address-change@1",
+            "cancellation@1"
+          ],
+          "scores": [
+            {
+              "source_id": "address-change@1",
+              "score": 11.536832479173118,
+              "bm25_score": 11.536832479173118,
+              "ngram_score": 0.2616746590739963
+            },
+            {
+              "source_id": "cancellation@1",
+              "score": 7.7706689264110285,
+              "bm25_score": 7.7706689264110285,
+              "ngram_score": 0.20130587154192778
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.6614
+        },
+        {
+          "id": "r038",
+          "query": "支付失败但是银行卡扣钱了",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "payment@1"
+          ],
+          "category": "payment",
+          "retrieved_source_ids": [
+            "payment@1",
+            "refund-progress@1",
+            "privacy@1"
+          ],
+          "scores": [
+            {
+              "source_id": "payment@1",
+              "score": 15.34994465379893,
+              "bm25_score": 15.34994465379893,
+              "ngram_score": 0.3172957780964107
+            },
+            {
+              "source_id": "refund-progress@1",
+              "score": 5.916964689147509,
+              "bm25_score": 5.916964689147509,
+              "ngram_score": 0.13104993584891095
+            },
+            {
+              "source_id": "privacy@1",
+              "score": 4.534197547479289,
+              "bm25_score": 4.534197547479289,
+              "ngram_score": 0.06970330664926692
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.683
+        },
+        {
+          "id": "r039",
+          "query": "重复付款两次应该怎么办",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "payment@1"
+          ],
+          "category": "payment",
+          "retrieved_source_ids": [
+            "payment@1"
+          ],
+          "scores": [
+            {
+              "source_id": "payment@1",
+              "score": 8.462758650757173,
+              "bm25_score": 8.462758650757173,
+              "ngram_score": 0.16821302013834818
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.5893
+        },
+        {
+          "id": "r040",
+          "query": "客服能让我提供短信验证码吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "privacy@1",
+            "payment@1"
+          ],
+          "category": "privacy",
+          "retrieved_source_ids": [
+            "privacy@1",
+            "refund-progress@1",
+            "payment@1"
+          ],
+          "scores": [
+            {
+              "source_id": "privacy@1",
+              "score": 8.586416623088256,
+              "bm25_score": 8.586416623088256,
+              "ngram_score": 0.21174062783275457
+            },
+            {
+              "source_id": "refund-progress@1",
+              "score": 7.01034581735219,
+              "bm25_score": 7.01034581735219,
+              "ngram_score": 0.10867211917091475
+            },
+            {
+              "source_id": "payment@1",
+              "score": 6.247787563614953,
+              "bm25_score": 6.247787563614953,
+              "ngram_score": 0.11086838772973881
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.7737
+        },
+        {
+          "id": "r041",
+          "query": "我可以查看其他人的收货电话吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "privacy@1"
+          ],
+          "category": "privacy",
+          "retrieved_source_ids": [
+            "address-change@1"
+          ],
+          "scores": [
+            {
+              "source_id": "address-change@1",
+              "score": 9.681359243103325,
+              "bm25_score": 9.681359243103325,
+              "ngram_score": 0.17715783503259533
+            }
+          ],
+          "recall_at_3": 0.0,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.7142
+        },
+        {
+          "id": "r042",
+          "query": "盒子破了还少配件，要准备什么照片",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "damaged@1"
+          ],
+          "category": "paraphrase",
+          "retrieved_source_ids": [
+            "damaged@1"
+          ],
+          "scores": [
+            {
+              "source_id": "damaged@1",
+              "score": 6.83672797803721,
+              "bm25_score": 6.83672797803721,
+              "ngram_score": 0.1152847396383255
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.597
+        },
+        {
+          "id": "r043",
+          "query": "收到的型号不对可以补寄吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "damaged@1"
+          ],
+          "category": "paraphrase",
+          "retrieved_source_ids": [
+            "damaged@1"
+          ],
+          "scores": [
+            {
+              "source_id": "damaged@1",
+              "score": 6.366591981178313,
+              "bm25_score": 6.366591981178313,
+              "ngram_score": 0.0932691141805369
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.6775
+        },
+        {
+          "id": "r044",
+          "query": "折叠键盘怎么连接蓝牙",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "product-info@1"
+          ],
+          "category": "products",
+          "retrieved_source_ids": [
+            "product-info@1"
+          ],
+          "scores": [
+            {
+              "source_id": "product-info@1",
+              "score": 14.083139164062006,
+              "bm25_score": 14.083139164062006,
+              "ngram_score": 0.30121899561160054
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.507
+        },
+        {
+          "id": "r045",
+          "query": "键盘能用 USB 接线吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "product-info@1"
+          ],
+          "category": "products",
+          "retrieved_source_ids": [
+            "product-info@1"
+          ],
+          "scores": [
+            {
+              "source_id": "product-info@1",
+              "score": 4.812821713454648,
+              "bm25_score": 4.812821713454648,
+              "ngram_score": 0.12524733534558347
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.656
+        },
+        {
+          "id": "r046",
+          "query": "快递显示已签收可我没收到东西",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "delivery-proof@1"
+          ],
+          "category": "delivery-proof",
+          "retrieved_source_ids": [
+            "delivery-proof@1"
+          ],
+          "scores": [
+            {
+              "source_id": "delivery-proof@1",
+              "score": 14.310400390810893,
+              "bm25_score": 14.310400390810893,
+              "ngram_score": 0.29586099020619167
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.7904
+        },
+        {
+          "id": "r047",
+          "query": "驿站代收但找不到包裹该怎么查",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "delivery-proof@1"
+          ],
+          "category": "delivery-proof",
+          "retrieved_source_ids": [
+            "delivery-proof@1"
+          ],
+          "scores": [
+            {
+              "source_id": "delivery-proof@1",
+              "score": 14.942637506689323,
+              "bm25_score": 14.942637506689323,
+              "ngram_score": 0.23768485923989172
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.9707
+        },
+        {
+          "id": "r048",
+          "query": "签收凭证能证明是本人收到吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "delivery-proof@1"
+          ],
+          "category": "delivery-proof",
+          "retrieved_source_ids": [
+            "delivery-proof@1"
+          ],
+          "scores": [
+            {
+              "source_id": "delivery-proof@1",
+              "score": 11.241350267953349,
+              "bm25_score": 11.241350267953349,
+              "ngram_score": 0.2512303860067622
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.9263
+        },
+        {
+          "id": "r049",
+          "query": "明天沪深股票会涨吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [],
+          "category": "out-of-domain",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": null,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": true,
+          "latency_ms": 0.6012
+        },
+        {
+          "id": "r050",
+          "query": "火星与木星的轨道半径是多少",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [],
+          "category": "out-of-domain",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": null,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": true,
+          "latency_ms": 0.7825
+        },
+        {
+          "id": "r051",
+          "query": "我应该怎么治疗偏头痛",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [],
+          "category": "out-of-domain",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": null,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": true,
+          "latency_ms": 0.5316
+        },
+        {
+          "id": "r052",
+          "query": "琥珀礼遇兑换暗号是什么",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [],
+          "category": "tenant-isolation",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": null,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": true,
+          "latency_ms": 0.5949
+        },
+        {
+          "id": "r053",
+          "query": "琥珀礼遇兑换暗号是什么",
+          "as_of": "2026-10-16",
+          "tenant_id": "other-shop",
+          "expected_source_ids": [
+            "other-benefit@1"
+          ],
+          "category": "tenant-isolation",
+          "retrieved_source_ids": [
+            "other-benefit@1"
+          ],
+          "scores": [
+            {
+              "source_id": "other-benefit@1",
+              "score": 2.491532234627031,
+              "bm25_score": 2.491532234627031,
+              "ngram_score": 0.48671904825560913
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.1063
+        },
+        {
+          "id": "r054",
+          "query": "退货退款政策是什么",
+          "as_of": "2026-10-16",
+          "tenant_id": "other-shop",
+          "expected_source_ids": [],
+          "category": "tenant-isolation",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": null,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": true,
+          "latency_ms": 0.0783
+        },
+        {
+          "id": "r055",
+          "query": "退货退款可以申请吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "unknown-shop",
+          "expected_source_ids": [],
+          "category": "tenant-isolation",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": null,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": true,
+          "latency_ms": 0.0228
+        },
+        {
+          "id": "r056",
+          "query": "银行卡贷款的利率是多少",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [],
+          "category": "lexical-distractor",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": null,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": true,
+          "latency_ms": 0.7106
+        },
+        {
+          "id": "r057",
+          "query": "发票打印机怎么连接 WiFi",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [],
+          "category": "lexical-distractor",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": null,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": true,
+          "latency_ms": 0.6372
+        },
+        {
+          "id": "r058",
+          "query": "清蒸鲈鱼的食谱",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [],
+          "category": "out-of-domain",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": null,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": true,
+          "latency_ms": 0.593
+        },
+        {
+          "id": "r059",
+          "query": "离婚财产怎么分配",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [],
+          "category": "out-of-domain",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": null,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": true,
+          "latency_ms": 0.2979
+        },
+        {
+          "id": "r060",
+          "query": "请给我私人微信号",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [],
+          "category": "unsupported-contact",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": null,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": true,
+          "latency_ms": 0.6732
+        }
+      ]
+    },
+    "ngram": {
+      "queries": 60,
+      "answerable": 48,
+      "unanswerable": 12,
+      "recall_at_3": 0.90625,
+      "mrr": 0.9166666666666666,
+      "no_answer_accuracy": 1,
+      "latency_ms_p50": 0.67095,
+      "cases": [
+        {
+          "id": "r001",
+          "query": "退货退款需要在签收几天内申请",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "returns@2"
+          ],
+          "category": "returns",
+          "retrieved_source_ids": [
+            "returns@2",
+            "cancellation@1"
+          ],
+          "scores": [
+            {
+              "source_id": "returns@2",
+              "score": 0.25669930542305286,
+              "bm25_score": 9.882952209419265,
+              "ngram_score": 0.25669930542305286
+            },
+            {
+              "source_id": "cancellation@1",
+              "score": 0.09251028542520802,
+              "bm25_score": 4.9068655551770615,
+              "ngram_score": 0.09251028542520802
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.8362
+        },
+        {
+          "id": "r002",
+          "query": "已经收到键盘了，现在不想要了能退钱吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "returns@2"
+          ],
+          "category": "paraphrase",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": 0.0,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.7946
+        },
+        {
+          "id": "r003",
+          "query": "下载的数字商品支持退货吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "returns@2"
+          ],
+          "category": "policy-exclusion",
+          "retrieved_source_ids": [
+            "returns@2"
+          ],
+          "scores": [
+            {
+              "source_id": "returns@2",
+              "score": 0.19093745168288379,
+              "bm25_score": 8.25756561037079,
+              "ngram_score": 0.19093745168288379
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.7668
+        },
+        {
+          "id": "r004",
+          "query": "定制商品可以申请退款吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "returns@2"
+          ],
+          "category": "policy-exclusion",
+          "retrieved_source_ids": [
+            "returns@2",
+            "refund-progress@1",
+            "warranty@1"
+          ],
+          "scores": [
+            {
+              "source_id": "returns@2",
+              "score": 0.35506103061020255,
+              "bm25_score": 9.137225166846479,
+              "ngram_score": 0.35506103061020255
+            },
+            {
+              "source_id": "refund-progress@1",
+              "score": 0.21630055970230938,
+              "bm25_score": 3.40087190132018,
+              "ngram_score": 0.21630055970230938
+            },
+            {
+              "source_id": "warranty@1",
+              "score": 0.11599547385333751,
+              "bm25_score": 2.0320342976422263,
+              "ngram_score": 0.11599547385333751
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.6636
+        },
+        {
+          "id": "r005",
+          "query": "确认申请就一定打款了吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "returns@2",
+            "refund-progress@1"
+          ],
+          "category": "capability-boundary",
+          "retrieved_source_ids": [
+            "returns@2",
+            "warranty@1",
+            "invoice@1"
+          ],
+          "scores": [
+            {
+              "source_id": "returns@2",
+              "score": 0.13684126526982027,
+              "bm25_score": 4.464324737557378,
+              "ngram_score": 0.13684126526982027
+            },
+            {
+              "source_id": "warranty@1",
+              "score": 0.0742520349725491,
+              "bm25_score": 1.8847168311822053,
+              "ngram_score": 0.0742520349725491
+            },
+            {
+              "source_id": "invoice@1",
+              "score": 0.06607761754829927,
+              "bm25_score": 1.858630152099521,
+              "ngram_score": 0.06607761754829927
+            }
+          ],
+          "recall_at_3": 0.5,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.6854
+        },
+        {
+          "id": "r006",
+          "query": "签收后八天才想退货还能申请吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "returns@2"
+          ],
+          "category": "returns",
+          "retrieved_source_ids": [
+            "returns@2",
+            "cancellation@1"
+          ],
+          "scores": [
+            {
+              "source_id": "returns@2",
+              "score": 0.2074315252115062,
+              "bm25_score": 7.085055538046705,
+              "ngram_score": 0.2074315252115062
+            },
+            {
+              "source_id": "cancellation@1",
+              "score": 0.0823593927333153,
+              "bm25_score": 5.162999603541012,
+              "ngram_score": 0.0823593927333153
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.7878
+        },
+        {
+          "id": "r007",
+          "query": "退货申请期限是多少天",
+          "as_of": "2025-12-31",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "returns@1"
+          ],
+          "category": "temporal-boundary",
+          "retrieved_source_ids": [
+            "returns@1",
+            "warranty@1"
+          ],
+          "scores": [
+            {
+              "source_id": "returns@1",
+              "score": 0.27265110913888446,
+              "bm25_score": 9.716200826298008,
+              "ngram_score": 0.27265110913888446
+            },
+            {
+              "source_id": "warranty@1",
+              "score": 0.07077758706429081,
+              "bm25_score": 2.8061920608950213,
+              "ngram_score": 0.07077758706429081
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.6928
+        },
+        {
+          "id": "r008",
+          "query": "退货申请期限是多少天",
+          "as_of": "2026-01-01",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "returns@2"
+          ],
+          "category": "temporal-boundary",
+          "retrieved_source_ids": [
+            "returns@2",
+            "warranty@1"
+          ],
+          "scores": [
+            {
+              "source_id": "returns@2",
+              "score": 0.2732592101591294,
+              "bm25_score": 9.716200826298008,
+              "ngram_score": 0.2732592101591294
+            },
+            {
+              "source_id": "warranty@1",
+              "score": 0.07077758706429081,
+              "bm25_score": 2.8061920608950213,
+              "ngram_score": 0.07077758706429081
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.6872
+        },
+        {
+          "id": "r009",
+          "query": "退货申请期限是多少天",
+          "as_of": "2024-12-31",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [],
+          "category": "before-coverage",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": null,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": true,
+          "latency_ms": 0.0229
+        },
+        {
+          "id": "r010",
+          "query": "退货申请期限是多少天",
+          "as_of": "2025-01-01",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "returns@1"
+          ],
+          "category": "temporal-boundary",
+          "retrieved_source_ids": [
+            "returns@1",
+            "warranty@1"
+          ],
+          "scores": [
+            {
+              "source_id": "returns@1",
+              "score": 0.27265110913888446,
+              "bm25_score": 9.716200826298008,
+              "ngram_score": 0.27265110913888446
+            },
+            {
+              "source_id": "warranty@1",
+              "score": 0.07077758706429081,
+              "bm25_score": 2.8061920608950213,
+              "ngram_score": 0.07077758706429081
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.675
+        },
+        {
+          "id": "r011",
+          "query": "现在还是14天退货政策吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "returns@2"
+          ],
+          "category": "outdated-premise",
+          "retrieved_source_ids": [
+            "returns@2"
+          ],
+          "scores": [
+            {
+              "source_id": "returns@2",
+              "score": 0.12021777031677199,
+              "bm25_score": 4.673776596566148,
+              "ngram_score": 0.12021777031677199
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.5778
+        },
+        {
+          "id": "r012",
+          "query": "退款申请提交之后怎么查进度",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "refund-progress@1"
+          ],
+          "category": "refund-progress",
+          "retrieved_source_ids": [
+            "refund-progress@1",
+            "returns@2",
+            "coupons@1"
+          ],
+          "scores": [
+            {
+              "source_id": "refund-progress@1",
+              "score": 0.32364572056602203,
+              "bm25_score": 10.984494509071087,
+              "ngram_score": 0.32364572056602203
+            },
+            {
+              "source_id": "returns@2",
+              "score": 0.28403871454864643,
+              "bm25_score": 6.818700094649815,
+              "ngram_score": 0.28403871454864643
+            },
+            {
+              "source_id": "coupons@1",
+              "score": 0.09484492397105228,
+              "bm25_score": 4.484311700695783,
+              "ngram_score": 0.09484492397105228
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.7731
+        },
+        {
+          "id": "r013",
+          "query": "钱什么时候到账，能查到原路退回时间吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "refund-progress@1"
+          ],
+          "category": "capability-boundary",
+          "retrieved_source_ids": [
+            "refund-progress@1",
+            "payment@1"
+          ],
+          "scores": [
+            {
+              "source_id": "refund-progress@1",
+              "score": 0.18991754222186236,
+              "bm25_score": 11.186286591691042,
+              "ngram_score": 0.18991754222186236
+            },
+            {
+              "source_id": "payment@1",
+              "score": 0.10330784087271494,
+              "bm25_score": 6.389526934019767,
+              "ngram_score": 0.10330784087271494
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.8479
+        },
+        {
+          "id": "r014",
+          "query": "submitted 是退款成功的意思吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "refund-progress@1"
+          ],
+          "category": "refund-progress",
+          "retrieved_source_ids": [
+            "refund-progress@1"
+          ],
+          "scores": [
+            {
+              "source_id": "refund-progress@1",
+              "score": 0.26249456972396895,
+              "bm25_score": 8.263502488069648,
+              "ngram_score": 0.26249456972396895
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.8759
+        },
+        {
+          "id": "r015",
+          "query": "多久可以发货",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "shipping@1"
+          ],
+          "category": "shipping",
+          "retrieved_source_ids": [
+            "shipping@1",
+            "address-change@1",
+            "cancellation@1"
+          ],
+          "scores": [
+            {
+              "source_id": "shipping@1",
+              "score": 0.21721718371085313,
+              "bm25_score": 2.355620473338376,
+              "ngram_score": 0.21721718371085313
+            },
+            {
+              "source_id": "address-change@1",
+              "score": 0.16737983495058367,
+              "bm25_score": 2.429990068571914,
+              "ngram_score": 0.16737983495058367
+            },
+            {
+              "source_id": "cancellation@1",
+              "score": 0.1493256954438407,
+              "bm25_score": 2.4120719901505896,
+              "ngram_score": 0.1493256954438407
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.5309
+        },
+        {
+          "id": "r016",
+          "query": "快递一直停着不更新该找谁",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "shipping@1"
+          ],
+          "category": "paraphrase",
+          "retrieved_source_ids": [
+            "shipping@1"
+          ],
+          "scores": [
+            {
+              "source_id": "shipping@1",
+              "score": 0.1094200136911632,
+              "bm25_score": 6.578206571083236,
+              "ngram_score": 0.1094200136911632
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.8228
+        },
+        {
+          "id": "r017",
+          "query": "物流轨迹和运单号在哪里核对",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "shipping@1"
+          ],
+          "category": "shipping",
+          "retrieved_source_ids": [
+            "shipping@1",
+            "delivery-proof@1"
+          ],
+          "scores": [
+            {
+              "source_id": "shipping@1",
+              "score": 0.234600401118232,
+              "bm25_score": 13.748414026567636,
+              "ngram_score": 0.234600401118232
+            },
+            {
+              "source_id": "delivery-proof@1",
+              "score": 0.0878942539626171,
+              "bm25_score": 3.6450842109668704,
+              "ngram_score": 0.0878942539626171
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.8823
+        },
+        {
+          "id": "r018",
+          "query": "包裹寄出来后大概几天到",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "shipping@1"
+          ],
+          "category": "paraphrase",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": 0.0,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.6554
+        },
+        {
+          "id": "r019",
+          "query": "满多少可以包邮",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "shipping-fee@1"
+          ],
+          "category": "shipping-fee",
+          "retrieved_source_ids": [
+            "shipping-fee@1"
+          ],
+          "scores": [
+            {
+              "source_id": "shipping-fee@1",
+              "score": 0.09452438952121103,
+              "bm25_score": 3.289468885493996,
+              "ngram_score": 0.09452438952121103
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.4729
+        },
+        {
+          "id": "r020",
+          "query": "退货寄回去邮费谁出",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "shipping-fee@1"
+          ],
+          "category": "paraphrase",
+          "retrieved_source_ids": [
+            "shipping-fee@1"
+          ],
+          "scores": [
+            {
+              "source_id": "shipping-fee@1",
+              "score": 0.18659754634704917,
+              "bm25_score": 8.98657145399282,
+              "ngram_score": 0.18659754634704917
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.6161
+        },
+        {
+          "id": "r021",
+          "query": "商品坏了，退货运费能报销吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "shipping-fee@1"
+          ],
+          "category": "shipping-fee",
+          "retrieved_source_ids": [
+            "shipping-fee@1",
+            "returns@2"
+          ],
+          "scores": [
+            {
+              "source_id": "shipping-fee@1",
+              "score": 0.31074944394708337,
+              "bm25_score": 12.38384466473286,
+              "ngram_score": 0.31074944394708337
+            },
+            {
+              "source_id": "returns@2",
+              "score": 0.16161017610709338,
+              "bm25_score": 3.6297502515189692,
+              "ngram_score": 0.16161017610709338
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.7752
+        },
+        {
+          "id": "r022",
+          "query": "公司报销要开发票，需要税号吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "invoice@1"
+          ],
+          "category": "invoice",
+          "retrieved_source_ids": [
+            "invoice@1"
+          ],
+          "scores": [
+            {
+              "source_id": "invoice@1",
+              "score": 0.22981573639916544,
+              "bm25_score": 10.519578534524847,
+              "ngram_score": 0.22981573639916544
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.768
+        },
+        {
+          "id": "r023",
+          "query": "电子票据多久能开好",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "invoice@1"
+          ],
+          "category": "paraphrase",
+          "retrieved_source_ids": [
+            "invoice@1"
+          ],
+          "scores": [
+            {
+              "source_id": "invoice@1",
+              "score": 0.1545889941407742,
+              "bm25_score": 8.999401166237098,
+              "ngram_score": 0.1545889941407742
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.723
+        },
+        {
+          "id": "r024",
+          "query": "我想开增值税专用发票",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "invoice@1"
+          ],
+          "category": "capability-boundary",
+          "retrieved_source_ids": [
+            "invoice@1"
+          ],
+          "scores": [
+            {
+              "source_id": "invoice@1",
+              "score": 0.29455242370468165,
+              "bm25_score": 15.494231208665958,
+              "ngram_score": 0.29455242370468165
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.6332
+        },
+        {
+          "id": "r025",
+          "query": "优惠券能叠加使用吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "coupons@1"
+          ],
+          "category": "coupons",
+          "retrieved_source_ids": [
+            "coupons@1"
+          ],
+          "scores": [
+            {
+              "source_id": "coupons@1",
+              "score": 0.4687682370095091,
+              "bm25_score": 19.98921355646824,
+              "ngram_score": 0.4687682370095091
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.6316
+        },
+        {
+          "id": "r026",
+          "query": "退款后优惠券会恢复吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "coupons@1"
+          ],
+          "category": "coupons",
+          "retrieved_source_ids": [
+            "coupons@1"
+          ],
+          "scores": [
+            {
+              "source_id": "coupons@1",
+              "score": 0.3405433643365493,
+              "bm25_score": 12.334102325213552,
+              "ngram_score": 0.3405433643365493
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.6516
+        },
+        {
+          "id": "r027",
+          "query": "券已经过期还能抵扣吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "coupons@1"
+          ],
+          "category": "paraphrase",
+          "retrieved_source_ids": [
+            "coupons@1"
+          ],
+          "scores": [
+            {
+              "source_id": "coupons@1",
+              "score": 0.057136759001147494,
+              "bm25_score": 4.774173723706966,
+              "ngram_score": 0.057136759001147494
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.7013
+        },
+        {
+          "id": "r028",
+          "query": "键盘保修期是多长",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "warranty@1"
+          ],
+          "category": "warranty",
+          "retrieved_source_ids": [
+            "warranty@1"
+          ],
+          "scores": [
+            {
+              "source_id": "warranty@1",
+              "score": 0.16796122625382282,
+              "bm25_score": 8.017243654380602,
+              "ngram_score": 0.16796122625382282
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.6045
+        },
+        {
+          "id": "r029",
+          "query": "按键失灵了，能免费维修吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "warranty@1"
+          ],
+          "category": "warranty",
+          "retrieved_source_ids": [
+            "warranty@1"
+          ],
+          "scores": [
+            {
+              "source_id": "warranty@1",
+              "score": 0.21975289312581833,
+              "bm25_score": 13.19679283453825,
+              "ngram_score": 0.21975289312581833
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.4683
+        },
+        {
+          "id": "r030",
+          "query": "自行拆机进水还在保修范围内吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "warranty@1"
+          ],
+          "category": "warranty",
+          "retrieved_source_ids": [
+            "warranty@1"
+          ],
+          "scores": [
+            {
+              "source_id": "warranty@1",
+              "score": 0.20041003850122335,
+              "bm25_score": 14.865656996079288,
+              "ngram_score": 0.20041003850122335
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.737
+        },
+        {
+          "id": "r031",
+          "query": "我想找真人客服",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "handoff@1"
+          ],
+          "category": "paraphrase",
+          "retrieved_source_ids": [
+            "handoff@1",
+            "privacy@1"
+          ],
+          "scores": [
+            {
+              "source_id": "handoff@1",
+              "score": 0.15939447974678,
+              "bm25_score": 2.841979735267186,
+              "ngram_score": 0.15939447974678
+            },
+            {
+              "source_id": "privacy@1",
+              "score": 0.07893185763321467,
+              "bm25_score": 0.33813651319555843,
+              "ngram_score": 0.07893185763321467
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.6648
+        },
+        {
+          "id": "r032",
+          "query": "人工客服几点上班",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "handoff@1"
+          ],
+          "category": "support",
+          "retrieved_source_ids": [
+            "handoff@1",
+            "damaged@1",
+            "privacy@1"
+          ],
+          "scores": [
+            {
+              "source_id": "handoff@1",
+              "score": 0.2131577589853248,
+              "bm25_score": 2.8927414896357004,
+              "ngram_score": 0.2131577589853248
+            },
+            {
+              "source_id": "damaged@1",
+              "score": 0.08886093284456215,
+              "bm25_score": 0.30726225421438,
+              "ngram_score": 0.08886093284456215
+            },
+            {
+              "source_id": "privacy@1",
+              "score": 0.08336605432303414,
+              "bm25_score": 0.3697091829964586,
+              "ngram_score": 0.08336605432303414
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.7081
+        },
+        {
+          "id": "r033",
+          "query": "投诉应该怎么处理",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "handoff@1"
+          ],
+          "category": "support",
+          "retrieved_source_ids": [
+            "handoff@1"
+          ],
+          "scores": [
+            {
+              "source_id": "handoff@1",
+              "score": 0.11859324326360025,
+              "bm25_score": 4.26106993398922,
+              "ngram_score": 0.11859324326360025
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.5298
+        },
+        {
+          "id": "r034",
+          "query": "没发货可以取消订单吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "cancellation@1"
+          ],
+          "category": "orders",
+          "retrieved_source_ids": [
+            "cancellation@1",
+            "address-change@1",
+            "shipping@1"
+          ],
+          "scores": [
+            {
+              "source_id": "cancellation@1",
+              "score": 0.46538972242097826,
+              "bm25_score": 10.378411400817788,
+              "ngram_score": 0.46538972242097826
+            },
+            {
+              "source_id": "address-change@1",
+              "score": 0.164577763067371,
+              "bm25_score": 2.777242510858034,
+              "ngram_score": 0.164577763067371
+            },
+            {
+              "source_id": "shipping@1",
+              "score": 0.16397115470292753,
+              "bm25_score": 2.688983544174696,
+              "ngram_score": 0.16397115470292753
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.6612
+        },
+        {
+          "id": "r035",
+          "query": "快递发出了还能拦截吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "cancellation@1"
+          ],
+          "category": "orders",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": 0.0,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.6791
+        },
+        {
+          "id": "r036",
+          "query": "收货地址写错了怎么改",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "address-change@1"
+          ],
+          "category": "orders",
+          "retrieved_source_ids": [
+            "address-change@1"
+          ],
+          "scores": [
+            {
+              "source_id": "address-change@1",
+              "score": 0.3944070597746429,
+              "bm25_score": 15.194622808009058,
+              "ngram_score": 0.3944070597746429
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.5789
+        },
+        {
+          "id": "r037",
+          "query": "已经发货了可以换收件人吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "address-change@1"
+          ],
+          "category": "orders",
+          "retrieved_source_ids": [
+            "address-change@1",
+            "cancellation@1"
+          ],
+          "scores": [
+            {
+              "source_id": "address-change@1",
+              "score": 0.2616746590739963,
+              "bm25_score": 11.536832479173118,
+              "ngram_score": 0.2616746590739963
+            },
+            {
+              "source_id": "cancellation@1",
+              "score": 0.20130587154192778,
+              "bm25_score": 7.7706689264110285,
+              "ngram_score": 0.20130587154192778
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.6855
+        },
+        {
+          "id": "r038",
+          "query": "支付失败但是银行卡扣钱了",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "payment@1"
+          ],
+          "category": "payment",
+          "retrieved_source_ids": [
+            "payment@1",
+            "refund-progress@1",
+            "privacy@1"
+          ],
+          "scores": [
+            {
+              "source_id": "payment@1",
+              "score": 0.3172957780964107,
+              "bm25_score": 15.34994465379893,
+              "ngram_score": 0.3172957780964107
+            },
+            {
+              "source_id": "refund-progress@1",
+              "score": 0.13104993584891095,
+              "bm25_score": 5.916964689147509,
+              "ngram_score": 0.13104993584891095
+            },
+            {
+              "source_id": "privacy@1",
+              "score": 0.06970330664926692,
+              "bm25_score": 4.534197547479289,
+              "ngram_score": 0.06970330664926692
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.7494
+        },
+        {
+          "id": "r039",
+          "query": "重复付款两次应该怎么办",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "payment@1"
+          ],
+          "category": "payment",
+          "retrieved_source_ids": [
+            "payment@1"
+          ],
+          "scores": [
+            {
+              "source_id": "payment@1",
+              "score": 0.16821302013834818,
+              "bm25_score": 8.462758650757173,
+              "ngram_score": 0.16821302013834818
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.6345
+        },
+        {
+          "id": "r040",
+          "query": "客服能让我提供短信验证码吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "privacy@1",
+            "payment@1"
+          ],
+          "category": "privacy",
+          "retrieved_source_ids": [
+            "privacy@1",
+            "payment@1",
+            "refund-progress@1"
+          ],
+          "scores": [
+            {
+              "source_id": "privacy@1",
+              "score": 0.21174062783275457,
+              "bm25_score": 8.586416623088256,
+              "ngram_score": 0.21174062783275457
+            },
+            {
+              "source_id": "payment@1",
+              "score": 0.11086838772973881,
+              "bm25_score": 6.247787563614953,
+              "ngram_score": 0.11086838772973881
+            },
+            {
+              "source_id": "refund-progress@1",
+              "score": 0.10867211917091475,
+              "bm25_score": 7.01034581735219,
+              "ngram_score": 0.10867211917091475
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.8238
+        },
+        {
+          "id": "r041",
+          "query": "我可以查看其他人的收货电话吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "privacy@1"
+          ],
+          "category": "privacy",
+          "retrieved_source_ids": [
+            "address-change@1"
+          ],
+          "scores": [
+            {
+              "source_id": "address-change@1",
+              "score": 0.17715783503259533,
+              "bm25_score": 9.681359243103325,
+              "ngram_score": 0.17715783503259533
+            }
+          ],
+          "recall_at_3": 0.0,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.7792
+        },
+        {
+          "id": "r042",
+          "query": "盒子破了还少配件，要准备什么照片",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "damaged@1"
+          ],
+          "category": "paraphrase",
+          "retrieved_source_ids": [
+            "damaged@1"
+          ],
+          "scores": [
+            {
+              "source_id": "damaged@1",
+              "score": 0.1152847396383255,
+              "bm25_score": 6.83672797803721,
+              "ngram_score": 0.1152847396383255
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.626
+        },
+        {
+          "id": "r043",
+          "query": "收到的型号不对可以补寄吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "damaged@1"
+          ],
+          "category": "paraphrase",
+          "retrieved_source_ids": [
+            "damaged@1"
+          ],
+          "scores": [
+            {
+              "source_id": "damaged@1",
+              "score": 0.0932691141805369,
+              "bm25_score": 6.366591981178313,
+              "ngram_score": 0.0932691141805369
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.7048
+        },
+        {
+          "id": "r044",
+          "query": "折叠键盘怎么连接蓝牙",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "product-info@1"
+          ],
+          "category": "products",
+          "retrieved_source_ids": [
+            "product-info@1"
+          ],
+          "scores": [
+            {
+              "source_id": "product-info@1",
+              "score": 0.30121899561160054,
+              "bm25_score": 14.083139164062006,
+              "ngram_score": 0.30121899561160054
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.4866
+        },
+        {
+          "id": "r045",
+          "query": "键盘能用 USB 接线吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "product-info@1"
+          ],
+          "category": "products",
+          "retrieved_source_ids": [
+            "product-info@1"
+          ],
+          "scores": [
+            {
+              "source_id": "product-info@1",
+              "score": 0.12524733534558347,
+              "bm25_score": 4.812821713454648,
+              "ngram_score": 0.12524733534558347
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.6613
+        },
+        {
+          "id": "r046",
+          "query": "快递显示已签收可我没收到东西",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "delivery-proof@1"
+          ],
+          "category": "delivery-proof",
+          "retrieved_source_ids": [
+            "delivery-proof@1"
+          ],
+          "scores": [
+            {
+              "source_id": "delivery-proof@1",
+              "score": 0.29586099020619167,
+              "bm25_score": 14.310400390810893,
+              "ngram_score": 0.29586099020619167
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.7986
+        },
+        {
+          "id": "r047",
+          "query": "驿站代收但找不到包裹该怎么查",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "delivery-proof@1"
+          ],
+          "category": "delivery-proof",
+          "retrieved_source_ids": [
+            "delivery-proof@1"
+          ],
+          "scores": [
+            {
+              "source_id": "delivery-proof@1",
+              "score": 0.23768485923989172,
+              "bm25_score": 14.942637506689323,
+              "ngram_score": 0.23768485923989172
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.7882
+        },
+        {
+          "id": "r048",
+          "query": "签收凭证能证明是本人收到吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "delivery-proof@1"
+          ],
+          "category": "delivery-proof",
+          "retrieved_source_ids": [
+            "delivery-proof@1"
+          ],
+          "scores": [
+            {
+              "source_id": "delivery-proof@1",
+              "score": 0.2512303860067622,
+              "bm25_score": 11.241350267953349,
+              "ngram_score": 0.2512303860067622
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.7854
+        },
+        {
+          "id": "r049",
+          "query": "明天沪深股票会涨吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [],
+          "category": "out-of-domain",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": null,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": true,
+          "latency_ms": 0.5755
+        },
+        {
+          "id": "r050",
+          "query": "火星与木星的轨道半径是多少",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [],
+          "category": "out-of-domain",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": null,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": true,
+          "latency_ms": 0.8129
+        },
+        {
+          "id": "r051",
+          "query": "我应该怎么治疗偏头痛",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [],
+          "category": "out-of-domain",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": null,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": true,
+          "latency_ms": 0.5206
+        },
+        {
+          "id": "r052",
+          "query": "琥珀礼遇兑换暗号是什么",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [],
+          "category": "tenant-isolation",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": null,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": true,
+          "latency_ms": 0.5925
+        },
+        {
+          "id": "r053",
+          "query": "琥珀礼遇兑换暗号是什么",
+          "as_of": "2026-10-16",
+          "tenant_id": "other-shop",
+          "expected_source_ids": [
+            "other-benefit@1"
+          ],
+          "category": "tenant-isolation",
+          "retrieved_source_ids": [
+            "other-benefit@1"
+          ],
+          "scores": [
+            {
+              "source_id": "other-benefit@1",
+              "score": 0.48671904825560913,
+              "bm25_score": 2.491532234627031,
+              "ngram_score": 0.48671904825560913
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.1238
+        },
+        {
+          "id": "r054",
+          "query": "退货退款政策是什么",
+          "as_of": "2026-10-16",
+          "tenant_id": "other-shop",
+          "expected_source_ids": [],
+          "category": "tenant-isolation",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": null,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": true,
+          "latency_ms": 0.0791
+        },
+        {
+          "id": "r055",
+          "query": "退货退款可以申请吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "unknown-shop",
+          "expected_source_ids": [],
+          "category": "tenant-isolation",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": null,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": true,
+          "latency_ms": 0.0225
+        },
+        {
+          "id": "r056",
+          "query": "银行卡贷款的利率是多少",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [],
+          "category": "lexical-distractor",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": null,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": true,
+          "latency_ms": 0.6938
+        },
+        {
+          "id": "r057",
+          "query": "发票打印机怎么连接 WiFi",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [],
+          "category": "lexical-distractor",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": null,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": true,
+          "latency_ms": 0.6434
+        },
+        {
+          "id": "r058",
+          "query": "清蒸鲈鱼的食谱",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [],
+          "category": "out-of-domain",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": null,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": true,
+          "latency_ms": 0.5676
+        },
+        {
+          "id": "r059",
+          "query": "离婚财产怎么分配",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [],
+          "category": "out-of-domain",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": null,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": true,
+          "latency_ms": 0.3059
+        },
+        {
+          "id": "r060",
+          "query": "请给我私人微信号",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [],
+          "category": "unsupported-contact",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": null,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": true,
+          "latency_ms": 0.6669
+        }
+      ]
+    },
+    "hybrid": {
+      "queries": 60,
+      "answerable": 48,
+      "unanswerable": 12,
+      "recall_at_3": 0.90625,
+      "mrr": 0.90625,
+      "no_answer_accuracy": 1,
+      "latency_ms_p50": 0.72315,
+      "cases": [
+        {
+          "id": "r001",
+          "query": "退货退款需要在签收几天内申请",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "returns@2"
+          ],
+          "category": "returns",
+          "retrieved_source_ids": [
+            "returns@2",
+            "cancellation@1"
+          ],
+          "scores": [
+            {
+              "source_id": "returns@2",
+              "score": 0.03278688524590164,
+              "bm25_score": 9.882952209419265,
+              "ngram_score": 0.25669930542305286
+            },
+            {
+              "source_id": "cancellation@1",
+              "score": 0.03225806451612903,
+              "bm25_score": 4.9068655551770615,
+              "ngram_score": 0.09251028542520802
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.8211
+        },
+        {
+          "id": "r002",
+          "query": "已经收到键盘了，现在不想要了能退钱吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "returns@2"
+          ],
+          "category": "paraphrase",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": 0.0,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.8244
+        },
+        {
+          "id": "r003",
+          "query": "下载的数字商品支持退货吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "returns@2"
+          ],
+          "category": "policy-exclusion",
+          "retrieved_source_ids": [
+            "returns@2"
+          ],
+          "scores": [
+            {
+              "source_id": "returns@2",
+              "score": 0.03278688524590164,
+              "bm25_score": 8.25756561037079,
+              "ngram_score": 0.19093745168288379
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.7921
+        },
+        {
+          "id": "r004",
+          "query": "定制商品可以申请退款吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "returns@2"
+          ],
+          "category": "policy-exclusion",
+          "retrieved_source_ids": [
+            "returns@2",
+            "refund-progress@1",
+            "coupons@1"
+          ],
+          "scores": [
+            {
+              "source_id": "returns@2",
+              "score": 0.03278688524590164,
+              "bm25_score": 9.137225166846479,
+              "ngram_score": 0.35506103061020255
+            },
+            {
+              "source_id": "refund-progress@1",
+              "score": 0.03225806451612903,
+              "bm25_score": 3.40087190132018,
+              "ngram_score": 0.21630055970230938
+            },
+            {
+              "source_id": "coupons@1",
+              "score": 0.03149801587301587,
+              "bm25_score": 2.807360734068342,
+              "ngram_score": 0.08077270754888725
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.971
+        },
+        {
+          "id": "r005",
+          "query": "确认申请就一定打款了吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "returns@2",
+            "refund-progress@1"
+          ],
+          "category": "capability-boundary",
+          "retrieved_source_ids": [
+            "returns@2",
+            "warranty@1",
+            "invoice@1"
+          ],
+          "scores": [
+            {
+              "source_id": "returns@2",
+              "score": 0.03278688524590164,
+              "bm25_score": 4.464324737557378,
+              "ngram_score": 0.13684126526982027
+            },
+            {
+              "source_id": "warranty@1",
+              "score": 0.03225806451612903,
+              "bm25_score": 1.8847168311822053,
+              "ngram_score": 0.0742520349725491
+            },
+            {
+              "source_id": "invoice@1",
+              "score": 0.031746031746031744,
+              "bm25_score": 1.858630152099521,
+              "ngram_score": 0.06607761754829927
+            }
+          ],
+          "recall_at_3": 0.5,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.9146
+        },
+        {
+          "id": "r006",
+          "query": "签收后八天才想退货还能申请吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "returns@2"
+          ],
+          "category": "returns",
+          "retrieved_source_ids": [
+            "returns@2",
+            "cancellation@1"
+          ],
+          "scores": [
+            {
+              "source_id": "returns@2",
+              "score": 0.03278688524590164,
+              "bm25_score": 7.085055538046705,
+              "ngram_score": 0.2074315252115062
+            },
+            {
+              "source_id": "cancellation@1",
+              "score": 0.03225806451612903,
+              "bm25_score": 5.162999603541012,
+              "ngram_score": 0.0823593927333153
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.8552
+        },
+        {
+          "id": "r007",
+          "query": "退货申请期限是多少天",
+          "as_of": "2025-12-31",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "returns@1"
+          ],
+          "category": "temporal-boundary",
+          "retrieved_source_ids": [
+            "returns@1",
+            "warranty@1",
+            "cancellation@1"
+          ],
+          "scores": [
+            {
+              "source_id": "returns@1",
+              "score": 0.03278688524590164,
+              "bm25_score": 9.716200826298008,
+              "ngram_score": 0.27265110913888446
+            },
+            {
+              "source_id": "warranty@1",
+              "score": 0.03225806451612903,
+              "bm25_score": 2.8061920608950213,
+              "ngram_score": 0.07077758706429081
+            },
+            {
+              "source_id": "cancellation@1",
+              "score": 0.015873015873015872,
+              "bm25_score": 2.321188772439198,
+              "ngram_score": 0.047560498057609986
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.9077
+        },
+        {
+          "id": "r008",
+          "query": "退货申请期限是多少天",
+          "as_of": "2026-01-01",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "returns@2"
+          ],
+          "category": "temporal-boundary",
+          "retrieved_source_ids": [
+            "returns@2",
+            "warranty@1",
+            "cancellation@1"
+          ],
+          "scores": [
+            {
+              "source_id": "returns@2",
+              "score": 0.03278688524590164,
+              "bm25_score": 9.716200826298008,
+              "ngram_score": 0.2732592101591294
+            },
+            {
+              "source_id": "warranty@1",
+              "score": 0.03225806451612903,
+              "bm25_score": 2.8061920608950213,
+              "ngram_score": 0.07077758706429081
+            },
+            {
+              "source_id": "cancellation@1",
+              "score": 0.015873015873015872,
+              "bm25_score": 2.321188772439198,
+              "ngram_score": 0.047560498057609986
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.7904
+        },
+        {
+          "id": "r009",
+          "query": "退货申请期限是多少天",
+          "as_of": "2024-12-31",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [],
+          "category": "before-coverage",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": null,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": true,
+          "latency_ms": 0.0247
+        },
+        {
+          "id": "r010",
+          "query": "退货申请期限是多少天",
+          "as_of": "2025-01-01",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "returns@1"
+          ],
+          "category": "temporal-boundary",
+          "retrieved_source_ids": [
+            "returns@1",
+            "warranty@1",
+            "cancellation@1"
+          ],
+          "scores": [
+            {
+              "source_id": "returns@1",
+              "score": 0.03278688524590164,
+              "bm25_score": 9.716200826298008,
+              "ngram_score": 0.27265110913888446
+            },
+            {
+              "source_id": "warranty@1",
+              "score": 0.03225806451612903,
+              "bm25_score": 2.8061920608950213,
+              "ngram_score": 0.07077758706429081
+            },
+            {
+              "source_id": "cancellation@1",
+              "score": 0.015873015873015872,
+              "bm25_score": 2.321188772439198,
+              "ngram_score": 0.047560498057609986
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.7226
+        },
+        {
+          "id": "r011",
+          "query": "现在还是14天退货政策吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "returns@2"
+          ],
+          "category": "outdated-premise",
+          "retrieved_source_ids": [
+            "returns@2"
+          ],
+          "scores": [
+            {
+              "source_id": "returns@2",
+              "score": 0.03278688524590164,
+              "bm25_score": 4.673776596566148,
+              "ngram_score": 0.12021777031677199
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.6216
+        },
+        {
+          "id": "r012",
+          "query": "退款申请提交之后怎么查进度",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "refund-progress@1"
+          ],
+          "category": "refund-progress",
+          "retrieved_source_ids": [
+            "refund-progress@1",
+            "returns@2",
+            "coupons@1"
+          ],
+          "scores": [
+            {
+              "source_id": "refund-progress@1",
+              "score": 0.03278688524590164,
+              "bm25_score": 10.984494509071087,
+              "ngram_score": 0.32364572056602203
+            },
+            {
+              "source_id": "returns@2",
+              "score": 0.03225806451612903,
+              "bm25_score": 6.818700094649815,
+              "ngram_score": 0.28403871454864643
+            },
+            {
+              "source_id": "coupons@1",
+              "score": 0.031746031746031744,
+              "bm25_score": 4.484311700695783,
+              "ngram_score": 0.09484492397105228
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.7784
+        },
+        {
+          "id": "r013",
+          "query": "钱什么时候到账，能查到原路退回时间吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "refund-progress@1"
+          ],
+          "category": "capability-boundary",
+          "retrieved_source_ids": [
+            "refund-progress@1",
+            "payment@1"
+          ],
+          "scores": [
+            {
+              "source_id": "refund-progress@1",
+              "score": 0.03278688524590164,
+              "bm25_score": 11.186286591691042,
+              "ngram_score": 0.18991754222186236
+            },
+            {
+              "source_id": "payment@1",
+              "score": 0.03225806451612903,
+              "bm25_score": 6.389526934019767,
+              "ngram_score": 0.10330784087271494
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.7664
+        },
+        {
+          "id": "r014",
+          "query": "submitted 是退款成功的意思吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "refund-progress@1"
+          ],
+          "category": "refund-progress",
+          "retrieved_source_ids": [
+            "refund-progress@1",
+            "cancellation@1"
+          ],
+          "scores": [
+            {
+              "source_id": "refund-progress@1",
+              "score": 0.03278688524590164,
+              "bm25_score": 8.263502488069648,
+              "ngram_score": 0.26249456972396895
+            },
+            {
+              "source_id": "cancellation@1",
+              "score": 0.016129032258064516,
+              "bm25_score": 2.8418108311018138,
+              "ngram_score": 0.034988986796853076
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.8318
+        },
+        {
+          "id": "r015",
+          "query": "多久可以发货",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "shipping@1"
+          ],
+          "category": "shipping",
+          "retrieved_source_ids": [
+            "address-change@1",
+            "shipping@1",
+            "cancellation@1"
+          ],
+          "scores": [
+            {
+              "source_id": "address-change@1",
+              "score": 0.03252247488101534,
+              "bm25_score": 2.429990068571914,
+              "ngram_score": 0.16737983495058367
+            },
+            {
+              "source_id": "shipping@1",
+              "score": 0.032266458495966696,
+              "bm25_score": 2.355620473338376,
+              "ngram_score": 0.21721718371085313
+            },
+            {
+              "source_id": "cancellation@1",
+              "score": 0.03200204813108039,
+              "bm25_score": 2.4120719901505896,
+              "ngram_score": 0.1493256954438407
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 0.5,
+          "correct_no_answer": null,
+          "latency_ms": 0.5118
+        },
+        {
+          "id": "r016",
+          "query": "快递一直停着不更新该找谁",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "shipping@1"
+          ],
+          "category": "paraphrase",
+          "retrieved_source_ids": [
+            "shipping@1"
+          ],
+          "scores": [
+            {
+              "source_id": "shipping@1",
+              "score": 0.03278688524590164,
+              "bm25_score": 6.578206571083236,
+              "ngram_score": 0.1094200136911632
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.7853
+        },
+        {
+          "id": "r017",
+          "query": "物流轨迹和运单号在哪里核对",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "shipping@1"
+          ],
+          "category": "shipping",
+          "retrieved_source_ids": [
+            "shipping@1",
+            "delivery-proof@1"
+          ],
+          "scores": [
+            {
+              "source_id": "shipping@1",
+              "score": 0.03278688524590164,
+              "bm25_score": 13.748414026567636,
+              "ngram_score": 0.234600401118232
+            },
+            {
+              "source_id": "delivery-proof@1",
+              "score": 0.03225806451612903,
+              "bm25_score": 3.6450842109668704,
+              "ngram_score": 0.0878942539626171
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.7943
+        },
+        {
+          "id": "r018",
+          "query": "包裹寄出来后大概几天到",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "shipping@1"
+          ],
+          "category": "paraphrase",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": 0.0,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.6117
+        },
+        {
+          "id": "r019",
+          "query": "满多少可以包邮",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "shipping-fee@1"
+          ],
+          "category": "shipping-fee",
+          "retrieved_source_ids": [
+            "shipping-fee@1"
+          ],
+          "scores": [
+            {
+              "source_id": "shipping-fee@1",
+              "score": 0.03278688524590164,
+              "bm25_score": 3.289468885493996,
+              "ngram_score": 0.09452438952121103
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.4329
+        },
+        {
+          "id": "r020",
+          "query": "退货寄回去邮费谁出",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "shipping-fee@1"
+          ],
+          "category": "paraphrase",
+          "retrieved_source_ids": [
+            "shipping-fee@1"
+          ],
+          "scores": [
+            {
+              "source_id": "shipping-fee@1",
+              "score": 0.03278688524590164,
+              "bm25_score": 8.98657145399282,
+              "ngram_score": 0.18659754634704917
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.5806
+        },
+        {
+          "id": "r021",
+          "query": "商品坏了，退货运费能报销吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "shipping-fee@1"
+          ],
+          "category": "shipping-fee",
+          "retrieved_source_ids": [
+            "shipping-fee@1",
+            "returns@2",
+            "invoice@1"
+          ],
+          "scores": [
+            {
+              "source_id": "shipping-fee@1",
+              "score": 0.03278688524590164,
+              "bm25_score": 12.38384466473286,
+              "ngram_score": 0.31074944394708337
+            },
+            {
+              "source_id": "returns@2",
+              "score": 0.03225806451612903,
+              "bm25_score": 3.6297502515189692,
+              "ngram_score": 0.16161017610709338
+            },
+            {
+              "source_id": "invoice@1",
+              "score": 0.015873015873015872,
+              "bm25_score": 2.4792145563530723,
+              "ngram_score": 0.0469896481639226
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.7069
+        },
+        {
+          "id": "r022",
+          "query": "公司报销要开发票，需要税号吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "invoice@1"
+          ],
+          "category": "invoice",
+          "retrieved_source_ids": [
+            "invoice@1"
+          ],
+          "scores": [
+            {
+              "source_id": "invoice@1",
+              "score": 0.03278688524590164,
+              "bm25_score": 10.519578534524847,
+              "ngram_score": 0.22981573639916544
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.7563
+        },
+        {
+          "id": "r023",
+          "query": "电子票据多久能开好",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "invoice@1"
+          ],
+          "category": "paraphrase",
+          "retrieved_source_ids": [
+            "invoice@1"
+          ],
+          "scores": [
+            {
+              "source_id": "invoice@1",
+              "score": 0.03278688524590164,
+              "bm25_score": 8.999401166237098,
+              "ngram_score": 0.1545889941407742
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.6946
+        },
+        {
+          "id": "r024",
+          "query": "我想开增值税专用发票",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "invoice@1"
+          ],
+          "category": "capability-boundary",
+          "retrieved_source_ids": [
+            "invoice@1"
+          ],
+          "scores": [
+            {
+              "source_id": "invoice@1",
+              "score": 0.03278688524590164,
+              "bm25_score": 15.494231208665958,
+              "ngram_score": 0.29455242370468165
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.649
+        },
+        {
+          "id": "r025",
+          "query": "优惠券能叠加使用吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "coupons@1"
+          ],
+          "category": "coupons",
+          "retrieved_source_ids": [
+            "coupons@1"
+          ],
+          "scores": [
+            {
+              "source_id": "coupons@1",
+              "score": 0.03278688524590164,
+              "bm25_score": 19.98921355646824,
+              "ngram_score": 0.4687682370095091
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.8069
+        },
+        {
+          "id": "r026",
+          "query": "退款后优惠券会恢复吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "coupons@1"
+          ],
+          "category": "coupons",
+          "retrieved_source_ids": [
+            "coupons@1"
+          ],
+          "scores": [
+            {
+              "source_id": "coupons@1",
+              "score": 0.03278688524590164,
+              "bm25_score": 12.334102325213552,
+              "ngram_score": 0.3405433643365493
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.9119
+        },
+        {
+          "id": "r027",
+          "query": "券已经过期还能抵扣吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "coupons@1"
+          ],
+          "category": "paraphrase",
+          "retrieved_source_ids": [
+            "coupons@1"
+          ],
+          "scores": [
+            {
+              "source_id": "coupons@1",
+              "score": 0.03278688524590164,
+              "bm25_score": 4.774173723706966,
+              "ngram_score": 0.057136759001147494
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.8955
+        },
+        {
+          "id": "r028",
+          "query": "键盘保修期是多长",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "warranty@1"
+          ],
+          "category": "warranty",
+          "retrieved_source_ids": [
+            "warranty@1"
+          ],
+          "scores": [
+            {
+              "source_id": "warranty@1",
+              "score": 0.03278688524590164,
+              "bm25_score": 8.017243654380602,
+              "ngram_score": 0.16796122625382282
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.6171
+        },
+        {
+          "id": "r029",
+          "query": "按键失灵了，能免费维修吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "warranty@1"
+          ],
+          "category": "warranty",
+          "retrieved_source_ids": [
+            "warranty@1"
+          ],
+          "scores": [
+            {
+              "source_id": "warranty@1",
+              "score": 0.03278688524590164,
+              "bm25_score": 13.19679283453825,
+              "ngram_score": 0.21975289312581833
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.4959
+        },
+        {
+          "id": "r030",
+          "query": "自行拆机进水还在保修范围内吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "warranty@1"
+          ],
+          "category": "warranty",
+          "retrieved_source_ids": [
+            "warranty@1"
+          ],
+          "scores": [
+            {
+              "source_id": "warranty@1",
+              "score": 0.03278688524590164,
+              "bm25_score": 14.865656996079288,
+              "ngram_score": 0.20041003850122335
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.7772
+        },
+        {
+          "id": "r031",
+          "query": "我想找真人客服",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "handoff@1"
+          ],
+          "category": "paraphrase",
+          "retrieved_source_ids": [
+            "handoff@1",
+            "privacy@1",
+            "damaged@1"
+          ],
+          "scores": [
+            {
+              "source_id": "handoff@1",
+              "score": 0.03278688524590164,
+              "bm25_score": 2.841979735267186,
+              "ngram_score": 0.15939447974678
+            },
+            {
+              "source_id": "privacy@1",
+              "score": 0.03225806451612903,
+              "bm25_score": 0.33813651319555843,
+              "ngram_score": 0.07893185763321467
+            },
+            {
+              "source_id": "damaged@1",
+              "score": 0.015873015873015872,
+              "bm25_score": 0.26182252352231644,
+              "ngram_score": 0.04246738703182531
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.8333
+        },
+        {
+          "id": "r032",
+          "query": "人工客服几点上班",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "handoff@1"
+          ],
+          "category": "support",
+          "retrieved_source_ids": [
+            "handoff@1",
+            "damaged@1",
+            "privacy@1"
+          ],
+          "scores": [
+            {
+              "source_id": "handoff@1",
+              "score": 0.03278688524590164,
+              "bm25_score": 2.8927414896357004,
+              "ngram_score": 0.2131577589853248
+            },
+            {
+              "source_id": "damaged@1",
+              "score": 0.03200204813108039,
+              "bm25_score": 0.30726225421438,
+              "ngram_score": 0.08886093284456215
+            },
+            {
+              "source_id": "privacy@1",
+              "score": 0.03200204813108039,
+              "bm25_score": 0.3697091829964586,
+              "ngram_score": 0.08336605432303414
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.755
+        },
+        {
+          "id": "r033",
+          "query": "投诉应该怎么处理",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "handoff@1"
+          ],
+          "category": "support",
+          "retrieved_source_ids": [
+            "handoff@1",
+            "damaged@1",
+            "address-change@1"
+          ],
+          "scores": [
+            {
+              "source_id": "handoff@1",
+              "score": 0.03278688524590164,
+              "bm25_score": 4.26106993398922,
+              "ngram_score": 0.11859324326360025
+            },
+            {
+              "source_id": "damaged@1",
+              "score": 0.016129032258064516,
+              "bm25_score": 0.9553841529646342,
+              "ngram_score": 0.04190144520185964
+            },
+            {
+              "source_id": "address-change@1",
+              "score": 0.015873015873015872,
+              "bm25_score": 0.9312911253300286,
+              "ngram_score": 0.03766340543237931
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.6247
+        },
+        {
+          "id": "r034",
+          "query": "没发货可以取消订单吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "cancellation@1"
+          ],
+          "category": "orders",
+          "retrieved_source_ids": [
+            "cancellation@1",
+            "address-change@1",
+            "shipping@1"
+          ],
+          "scores": [
+            {
+              "source_id": "cancellation@1",
+              "score": 0.03278688524590164,
+              "bm25_score": 10.378411400817788,
+              "ngram_score": 0.46538972242097826
+            },
+            {
+              "source_id": "address-change@1",
+              "score": 0.03225806451612903,
+              "bm25_score": 2.777242510858034,
+              "ngram_score": 0.164577763067371
+            },
+            {
+              "source_id": "shipping@1",
+              "score": 0.031746031746031744,
+              "bm25_score": 2.688983544174696,
+              "ngram_score": 0.16397115470292753
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.707
+        },
+        {
+          "id": "r035",
+          "query": "快递发出了还能拦截吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "cancellation@1"
+          ],
+          "category": "orders",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": 0.0,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.6912
+        },
+        {
+          "id": "r036",
+          "query": "收货地址写错了怎么改",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "address-change@1"
+          ],
+          "category": "orders",
+          "retrieved_source_ids": [
+            "address-change@1"
+          ],
+          "scores": [
+            {
+              "source_id": "address-change@1",
+              "score": 0.03278688524590164,
+              "bm25_score": 15.194622808009058,
+              "ngram_score": 0.3944070597746429
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.5576
+        },
+        {
+          "id": "r037",
+          "query": "已经发货了可以换收件人吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "address-change@1"
+          ],
+          "category": "orders",
+          "retrieved_source_ids": [
+            "address-change@1",
+            "cancellation@1"
+          ],
+          "scores": [
+            {
+              "source_id": "address-change@1",
+              "score": 0.03278688524590164,
+              "bm25_score": 11.536832479173118,
+              "ngram_score": 0.2616746590739963
+            },
+            {
+              "source_id": "cancellation@1",
+              "score": 0.03225806451612903,
+              "bm25_score": 7.7706689264110285,
+              "ngram_score": 0.20130587154192778
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.7558
+        },
+        {
+          "id": "r038",
+          "query": "支付失败但是银行卡扣钱了",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "payment@1"
+          ],
+          "category": "payment",
+          "retrieved_source_ids": [
+            "payment@1",
+            "refund-progress@1",
+            "privacy@1"
+          ],
+          "scores": [
+            {
+              "source_id": "payment@1",
+              "score": 0.03278688524590164,
+              "bm25_score": 15.34994465379893,
+              "ngram_score": 0.3172957780964107
+            },
+            {
+              "source_id": "refund-progress@1",
+              "score": 0.03225806451612903,
+              "bm25_score": 5.916964689147509,
+              "ngram_score": 0.13104993584891095
+            },
+            {
+              "source_id": "privacy@1",
+              "score": 0.031746031746031744,
+              "bm25_score": 4.534197547479289,
+              "ngram_score": 0.06970330664926692
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.7237
+        },
+        {
+          "id": "r039",
+          "query": "重复付款两次应该怎么办",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "payment@1"
+          ],
+          "category": "payment",
+          "retrieved_source_ids": [
+            "payment@1"
+          ],
+          "scores": [
+            {
+              "source_id": "payment@1",
+              "score": 0.03278688524590164,
+              "bm25_score": 8.462758650757173,
+              "ngram_score": 0.16821302013834818
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.616
+        },
+        {
+          "id": "r040",
+          "query": "客服能让我提供短信验证码吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "privacy@1",
+            "payment@1"
+          ],
+          "category": "privacy",
+          "retrieved_source_ids": [
+            "privacy@1",
+            "payment@1",
+            "refund-progress@1"
+          ],
+          "scores": [
+            {
+              "source_id": "privacy@1",
+              "score": 0.03278688524590164,
+              "bm25_score": 8.586416623088256,
+              "ngram_score": 0.21174062783275457
+            },
+            {
+              "source_id": "payment@1",
+              "score": 0.03200204813108039,
+              "bm25_score": 6.247787563614953,
+              "ngram_score": 0.11086838772973881
+            },
+            {
+              "source_id": "refund-progress@1",
+              "score": 0.03200204813108039,
+              "bm25_score": 7.01034581735219,
+              "ngram_score": 0.10867211917091475
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.7973
+        },
+        {
+          "id": "r041",
+          "query": "我可以查看其他人的收货电话吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "privacy@1"
+          ],
+          "category": "privacy",
+          "retrieved_source_ids": [
+            "address-change@1"
+          ],
+          "scores": [
+            {
+              "source_id": "address-change@1",
+              "score": 0.03278688524590164,
+              "bm25_score": 9.681359243103325,
+              "ngram_score": 0.17715783503259533
+            }
+          ],
+          "recall_at_3": 0.0,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.7363
+        },
+        {
+          "id": "r042",
+          "query": "盒子破了还少配件，要准备什么照片",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "damaged@1"
+          ],
+          "category": "paraphrase",
+          "retrieved_source_ids": [
+            "damaged@1"
+          ],
+          "scores": [
+            {
+              "source_id": "damaged@1",
+              "score": 0.03278688524590164,
+              "bm25_score": 6.83672797803721,
+              "ngram_score": 0.1152847396383255
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.5966
+        },
+        {
+          "id": "r043",
+          "query": "收到的型号不对可以补寄吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "damaged@1"
+          ],
+          "category": "paraphrase",
+          "retrieved_source_ids": [
+            "damaged@1"
+          ],
+          "scores": [
+            {
+              "source_id": "damaged@1",
+              "score": 0.03278688524590164,
+              "bm25_score": 6.366591981178313,
+              "ngram_score": 0.0932691141805369
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.6927
+        },
+        {
+          "id": "r044",
+          "query": "折叠键盘怎么连接蓝牙",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "product-info@1"
+          ],
+          "category": "products",
+          "retrieved_source_ids": [
+            "product-info@1"
+          ],
+          "scores": [
+            {
+              "source_id": "product-info@1",
+              "score": 0.03278688524590164,
+              "bm25_score": 14.083139164062006,
+              "ngram_score": 0.30121899561160054
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.4726
+        },
+        {
+          "id": "r045",
+          "query": "键盘能用 USB 接线吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "product-info@1"
+          ],
+          "category": "products",
+          "retrieved_source_ids": [
+            "product-info@1"
+          ],
+          "scores": [
+            {
+              "source_id": "product-info@1",
+              "score": 0.03278688524590164,
+              "bm25_score": 4.812821713454648,
+              "ngram_score": 0.12524733534558347
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.6515
+        },
+        {
+          "id": "r046",
+          "query": "快递显示已签收可我没收到东西",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "delivery-proof@1"
+          ],
+          "category": "delivery-proof",
+          "retrieved_source_ids": [
+            "delivery-proof@1"
+          ],
+          "scores": [
+            {
+              "source_id": "delivery-proof@1",
+              "score": 0.03278688524590164,
+              "bm25_score": 14.310400390810893,
+              "ngram_score": 0.29586099020619167
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.8164
+        },
+        {
+          "id": "r047",
+          "query": "驿站代收但找不到包裹该怎么查",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "delivery-proof@1"
+          ],
+          "category": "delivery-proof",
+          "retrieved_source_ids": [
+            "delivery-proof@1"
+          ],
+          "scores": [
+            {
+              "source_id": "delivery-proof@1",
+              "score": 0.03278688524590164,
+              "bm25_score": 14.942637506689323,
+              "ngram_score": 0.23768485923989172
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.8192
+        },
+        {
+          "id": "r048",
+          "query": "签收凭证能证明是本人收到吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [
+            "delivery-proof@1"
+          ],
+          "category": "delivery-proof",
+          "retrieved_source_ids": [
+            "delivery-proof@1"
+          ],
+          "scores": [
+            {
+              "source_id": "delivery-proof@1",
+              "score": 0.03278688524590164,
+              "bm25_score": 11.241350267953349,
+              "ngram_score": 0.2512303860067622
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.9742
+        },
+        {
+          "id": "r049",
+          "query": "明天沪深股票会涨吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [],
+          "category": "out-of-domain",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": null,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": true,
+          "latency_ms": 0.6448
+        },
+        {
+          "id": "r050",
+          "query": "火星与木星的轨道半径是多少",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [],
+          "category": "out-of-domain",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": null,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": true,
+          "latency_ms": 0.8554
+        },
+        {
+          "id": "r051",
+          "query": "我应该怎么治疗偏头痛",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [],
+          "category": "out-of-domain",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": null,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": true,
+          "latency_ms": 0.5671
+        },
+        {
+          "id": "r052",
+          "query": "琥珀礼遇兑换暗号是什么",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [],
+          "category": "tenant-isolation",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": null,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": true,
+          "latency_ms": 0.5968
+        },
+        {
+          "id": "r053",
+          "query": "琥珀礼遇兑换暗号是什么",
+          "as_of": "2026-10-16",
+          "tenant_id": "other-shop",
+          "expected_source_ids": [
+            "other-benefit@1"
+          ],
+          "category": "tenant-isolation",
+          "retrieved_source_ids": [
+            "other-benefit@1"
+          ],
+          "scores": [
+            {
+              "source_id": "other-benefit@1",
+              "score": 0.03278688524590164,
+              "bm25_score": 2.491532234627031,
+              "ngram_score": 0.48671904825560913
+            }
+          ],
+          "recall_at_3": 1.0,
+          "reciprocal_rank": 1.0,
+          "correct_no_answer": null,
+          "latency_ms": 0.1274
+        },
+        {
+          "id": "r054",
+          "query": "退货退款政策是什么",
+          "as_of": "2026-10-16",
+          "tenant_id": "other-shop",
+          "expected_source_ids": [],
+          "category": "tenant-isolation",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": null,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": true,
+          "latency_ms": 0.0881
+        },
+        {
+          "id": "r055",
+          "query": "退货退款可以申请吗",
+          "as_of": "2026-10-16",
+          "tenant_id": "unknown-shop",
+          "expected_source_ids": [],
+          "category": "tenant-isolation",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": null,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": true,
+          "latency_ms": 0.0237
+        },
+        {
+          "id": "r056",
+          "query": "银行卡贷款的利率是多少",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [],
+          "category": "lexical-distractor",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": null,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": true,
+          "latency_ms": 0.7246
+        },
+        {
+          "id": "r057",
+          "query": "发票打印机怎么连接 WiFi",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [],
+          "category": "lexical-distractor",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": null,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": true,
+          "latency_ms": 0.6724
+        },
+        {
+          "id": "r058",
+          "query": "清蒸鲈鱼的食谱",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [],
+          "category": "out-of-domain",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": null,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": true,
+          "latency_ms": 0.5725
+        },
+        {
+          "id": "r059",
+          "query": "离婚财产怎么分配",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [],
+          "category": "out-of-domain",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": null,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": true,
+          "latency_ms": 0.3103
+        },
+        {
+          "id": "r060",
+          "query": "请给我私人微信号",
+          "as_of": "2026-10-16",
+          "tenant_id": "demo-shop",
+          "expected_source_ids": [],
+          "category": "unsupported-contact",
+          "retrieved_source_ids": [],
+          "scores": [],
+          "recall_at_3": null,
+          "reciprocal_rank": 0.0,
+          "correct_no_answer": true,
+          "latency_ms": 0.8816
+        }
+      ]
+    }
+  },
+  "workflow": {
+    "total": 16,
+    "passed": 16,
+    "cases": [
+      {
+        "id": "w01",
+        "name": "当前退货政策",
+        "passed": true,
+        "expected": "answered; order=None; source=returns@2",
+        "actual": "answered; order=None; sources=returns@2"
+      },
+      {
+        "id": "w02",
+        "name": "本人订单查询",
+        "passed": true,
+        "expected": "answered; order=TD-1001; source=None",
+        "actual": "answered; order=TD-1001; sources="
+      },
+      {
+        "id": "w03",
+        "name": "准备符合条件的申请",
+        "passed": true,
+        "expected": "needs_confirmation; order=TD-1001; source=returns@2",
+        "actual": "needs_confirmation; order=TD-1001; sources=returns@2"
+      },
+      {
+        "id": "w04",
+        "name": "超过政策期限",
+        "passed": true,
+        "expected": "handoff; order=TD-1002; source=returns@2",
+        "actual": "handoff; order=TD-1002; sources=returns@2"
+      },
+      {
+        "id": "w05",
+        "name": "数字商品不适用",
+        "passed": true,
+        "expected": "handoff; order=TD-1003; source=returns@2",
+        "actual": "handoff; order=TD-1003; sources=returns@2"
+      },
+      {
+        "id": "w06",
+        "name": "尚未签收",
+        "passed": true,
+        "expected": "handoff; order=TD-1004; source=returns@2",
+        "actual": "handoff; order=TD-1004; sources=returns@2"
+      },
+      {
+        "id": "w07",
+        "name": "其他客户的订单不可见",
+        "passed": true,
+        "expected": "handoff; order=None; source=None",
+        "actual": "handoff; order=None; sources="
+      },
+      {
+        "id": "w08",
+        "name": "先补充订单号",
+        "passed": true,
+        "expected": "needs_information; order=None; source=None",
+        "actual": "needs_information; order=None; sources="
+      },
+      {
+        "id": "w09",
+        "name": "多轮引用上一订单",
+        "passed": true,
+        "expected": "needs_confirmation; order=TD-1001; source=returns@2",
+        "actual": "needs_confirmation; order=TD-1001; sources=returns@2"
+      },
+      {
+        "id": "w10",
+        "name": "否定操作不创建申请",
+        "passed": true,
+        "expected": "needs_information; order=None; source=None",
+        "actual": "needs_information; order=None; sources="
+      },
+      {
+        "id": "w11",
+        "name": "无证据问题",
+        "passed": true,
+        "expected": "handoff; order=None; source=None",
+        "actual": "handoff; order=None; sources="
+      },
+      {
+        "id": "w12",
+        "name": "一次处理一个订单",
+        "passed": true,
+        "expected": "needs_information; order=None; source=None",
+        "actual": "needs_information; order=None; sources="
+      },
+      {
+        "id": "w13",
+        "name": "对话网络重试幂等",
+        "passed": true,
+        "expected": "返回完全相同的 turn",
+        "actual": "same turn"
+      },
+      {
+        "id": "w14",
+        "name": "重复确认只产生一张回执",
+        "passed": true,
+        "expected": "same receipt; replayed=true",
+        "actual": "same_receipt=True; replayed=True"
+      },
+      {
+        "id": "w15",
+        "name": "取消后不可提交",
+        "passed": true,
+        "expected": "cancelled",
+        "actual": "cancelled; ACTION_CANCELLED"
+      },
+      {
+        "id": "w16",
+        "name": "过期后不可提交",
+        "passed": true,
+        "expected": "expired",
+        "actual": "expired; ACTION_EXPIRED"
+      }
+    ]
+  },
+  "live_model": {
+    "status": "not_run",
+    "reason": "由使用者配置模型服务后执行 probe-model；此报告没有真实模型成绩。"
+  }
+}

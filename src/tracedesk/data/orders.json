@@ -1,0 +1,14 @@
+{
+  "description": "独立构造的演示样例，非真实客户或交易。订单日期相对首次初始化时间生成。",
+  "customers": [
+    {"id": "customer-a", "name": "演示用户 A", "tenant_id": "demo-shop"},
+    {"id": "customer-b", "name": "演示用户 B", "tenant_id": "demo-shop"}
+  ],
+  "orders": [
+    {"id": "TD-1001", "customer_id": "customer-a", "tenant_id": "demo-shop", "product": "折叠键盘", "category": "standard", "amount_minor": 12900, "currency": "CNY", "status": "delivered", "delivered_days_ago": 2, "version": 1},
+    {"id": "TD-1002", "customer_id": "customer-a", "tenant_id": "demo-shop", "product": "桌面支架", "category": "standard", "amount_minor": 8900, "currency": "CNY", "status": "delivered", "delivered_days_ago": 12, "version": 1},
+    {"id": "TD-1003", "customer_id": "customer-a", "tenant_id": "demo-shop", "product": "数字绘图课程", "category": "digital", "amount_minor": 19900, "currency": "CNY", "status": "delivered", "delivered_days_ago": 1, "version": 1},
+    {"id": "TD-1004", "customer_id": "customer-a", "tenant_id": "demo-shop", "product": "便携收纳袋", "category": "standard", "amount_minor": 3900, "currency": "CNY", "status": "shipped", "delivered_days_ago": null, "version": 1},
+    {"id": "TD-2001", "customer_id": "customer-b", "tenant_id": "demo-shop", "product": "无线鼠标", "category": "standard", "amount_minor": 15900, "currency": "CNY", "status": "delivered", "delivered_days_ago": 3, "version": 1}
+  ]
+}

@@ -1,0 +1,107 @@
+{
+  "schema_version": 1,
+  "documents": [
+    {
+      "id": "returns", "version": 1, "title": "退货与退款申请期限", "category": "returns", "tenant_id": "demo-shop",
+      "effective_from": "2025-01-01", "effective_to": "2026-01-01",
+      "text": "本店普通商品的退货退款申请期限为签收后 {window_days} 天。仅适用于状态为{allowed_statuses}的订单；{excluded_categories}不适用。想退货、退钱或不想要了，可以先核对商品类别与签收日期。符合政策时客服只能准备退款申请，需本人核对订单及金额并确认后提交。提交申请不代表实际打款，也不承诺到账日期。超出期限或资料不全时转人工审核。",
+      "rules": {"window_days": 14, "allowed_statuses": ["delivered"], "excluded_categories": ["digital", "custom"]}
+    },
+    {
+      "id": "returns", "version": 2, "title": "退货与退款申请期限", "category": "returns", "tenant_id": "demo-shop",
+      "effective_from": "2026-01-01", "effective_to": null,
+      "text": "本店普通商品的退货退款申请期限为签收后 {window_days} 天。仅适用于状态为{allowed_statuses}的订单；{excluded_categories}不适用。想退货、退钱或不想要了，可以先核对商品类别与签收日期。符合政策时客服只能准备退款申请，需本人核对订单及金额并确认后提交。提交申请不代表实际打款，也不承诺到账日期。超出期限或资料不全时转人工审核。",
+      "rules": {"window_days": 7, "allowed_statuses": ["delivered"], "excluded_categories": ["digital", "custom"]}
+    },
+    {
+      "id": "refund-progress", "version": 1, "title": "退款进度与申请回执", "category": "returns", "tenant_id": "demo-shop",
+      "effective_from": "2025-01-01", "effective_to": null,
+      "text": "退款申请提交后可凭回执编号核对申请进度。状态 submitted 仅表示申请已受理，不表示退款成功或资金已到账。本演示不连接支付机构，无法查询银行卡流水、原路退回时间或承诺多久收到钱。若想查询退钱进度、退款到账或银行扣款异常，请准备订单号和已有回执并转人工核对。不要提供银行卡密码或短信验证码。",
+      "rules": {}
+    },
+    {
+      "id": "shipping", "version": 1, "title": "发货、快递与物流进度", "category": "shipping", "tenant_id": "demo-shop",
+      "effective_from": "2025-01-01", "effective_to": null,
+      "text": "付款后的普通现货预计在 {dispatch_workdays} 个工作日内发货，节假日顺延。发货后可在订单详情核对运单号及快递物流轨迹。常规运输预计 {transit_min_days} 至 {transit_max_days} 天，属于估计而非到货保证。想知道包裹到哪里了、何时寄出或多久收到货，应先核对订单状态；物流长时间不更新、快递停滞或超过预计时间时转人工联系承运商。客服不能编造运单或实时位置。",
+      "rules": {"dispatch_workdays": 2, "transit_min_days": 3, "transit_max_days": 5}
+    },
+    {
+      "id": "shipping-fee", "version": 1, "title": "邮费、包邮与退货运费", "category": "shipping", "tenant_id": "demo-shop",
+      "effective_from": "2025-01-01", "effective_to": null,
+      "text": "普通配送订单实付满 {free_shipping_yuan} 元可包邮，未满门槛收取 {standard_fee_yuan} 元邮费。偏远地区的额外运费以结算页明示金额为准，客服不能事后补报固定价格。因个人原因退货，寄回运费由买家承担；如商品破损或错发，需先提交照片供人工核实，再确定退货运费承担方。不会仅凭一句描述自动报销寄回快递费用。",
+      "rules": {"free_shipping_yuan": 59, "standard_fee_yuan": 6}
+    },
+    {
+      "id": "invoice", "version": 1, "title": "电子发票与开票资料", "category": "invoice", "tenant_id": "demo-shop",
+      "effective_from": "2025-01-01", "effective_to": null,
+      "text": "本店提供电子普通发票。个人开票需要发票抬头；企业报销需要公司全称和纳税人识别号。开票内容按实际购买商品填写，不能虚开或任意改成其他品类。发票申请经人工核对后预计 {invoice_workdays} 个工作日处理，电子票据发送方式由人工确认。暂不支持增值税专用发票。发票抬头或税号填错时，提交原票信息申请更正，客服不能直接修改已开具票据。",
+      "rules": {"invoice_workdays": 7}
+    },
+    {
+      "id": "coupons", "version": 1, "title": "优惠券、折扣与优惠叠加", "category": "promotion", "tenant_id": "demo-shop",
+      "effective_from": "2025-01-01", "effective_to": null,
+      "text": "每笔订单最多使用 {max_coupons_per_order} 张店铺优惠券，不能叠加多张券。折扣码与优惠券能否同时使用以该券说明为准。优惠券过期、商品不在适用范围或实付未达满减门槛时无法抵扣。提交退款申请不会自动补发、恢复或延期优惠券，退券资格需人工核对活动条款。客服不能承诺额外优惠或伪造券码。",
+      "rules": {"max_coupons_per_order": 1}
+    },
+    {
+      "id": "warranty", "version": 1, "title": "保修期限与维修申请", "category": "aftersales", "tenant_id": "demo-shop",
+      "effective_from": "2025-01-01", "effective_to": null,
+      "text": "本店演示商品中的实物键盘提供 {warranty_months} 个月有限保修，以购买凭证日期起算。按键失灵、无法充电等故障可提交订单号、故障现象及照片申请检修。自然磨损、耗材、进液和自行拆机造成的损坏不在免费保修范围。是否维修、换新及费用由人工检测确认；售后客服不能远程断定故障原因或保证免费更换。其他商品的保修以各自说明为准。",
+      "rules": {"warranty_months": 12}
+    },
+    {
+      "id": "handoff", "version": 1, "title": "联系人工客服与投诉渠道", "category": "support", "tenant_id": "demo-shop",
+      "effective_from": "2025-01-01", "effective_to": null,
+      "text": "遇到证据不足、售后争议、投诉或需要真人处理时，可选择转人工并提供订单号与问题摘要。人工服务时间为工作日 {support_start_hour}:00 至 {support_end_hour}:00，节假日不承诺即时响应。此演示只整理需要转交的信息，不创建真实客服工单，也没有对外客服电话。不要将演示记录误认为已联系到真实商家。",
+      "rules": {"support_start_hour": 9, "support_end_hour": 18}
+    },
+    {
+      "id": "cancellation", "version": 1, "title": "取消订单与发货拦截", "category": "orders", "tenant_id": "demo-shop",
+      "effective_from": "2025-01-01", "effective_to": null,
+      "text": "尚未发货的订单可先提出取消请求，由人工核对是否已经进入打包流程。已经发货时不能直接撤销订单，可申请联系承运商尝试拦截，拦截不保证成功。订单取消与签收后退货是不同流程。当前演示不执行取消订单、物流拦截或真实资金退款；客服应说明需要人工处理，不能显示已经取消。",
+      "rules": {}
+    },
+    {
+      "id": "address-change", "version": 1, "title": "修改收货地址与联系人", "category": "orders", "tenant_id": "demo-shop",
+      "effective_from": "2025-01-01", "effective_to": null,
+      "text": "收货地址写错、联系电话填错或想换收件人时，应先核对订单是否已发货。未发货订单由人工核对身份后处理地址变更；已发货包裹需承运商确认能否改派，不能保证成功或无额外费用。当前对话只说明流程，不直接修改地址、收件人或电话，也不会公开其他客户的收货资料。",
+      "rules": {}
+    },
+    {
+      "id": "payment", "version": 1, "title": "支付失败与重复扣款", "category": "payment", "tenant_id": "demo-shop",
+      "effective_from": "2025-01-01", "effective_to": null,
+      "text": "支付失败但银行显示扣款、重复付款或付款状态不同步时，请先保存交易时间和订单号，避免反复支付。付款核对需由人工联系支付渠道，本演示不会读取银行流水，也不会代用户重新扣款。客服不应索取银行卡密码、支付口令或短信验证码。无法确认的钱款状态必须标为待核对，不能宣称已经原路退回。",
+      "rules": {}
+    },
+    {
+      "id": "privacy", "version": 1, "title": "隐私、身份核对与账号安全", "category": "privacy", "tenant_id": "demo-shop",
+      "effective_from": "2025-01-01", "effective_to": null,
+      "text": "客服只能处理当前登录客户自己的订单，不向其他客户披露地址、电话、支付信息或会话内容。身份核对遵循最少信息原则，不要求发送身份证照片、银行卡密码或短信验证码。有人自称客服索取验证码时应停止提供信息并联系人工。演示客户和订单均为虚构样例，不能用于查询真实个人信息。",
+      "rules": {}
+    },
+    {
+      "id": "damaged", "version": 1, "title": "商品破损、缺件与错发处理", "category": "aftersales", "tenant_id": "demo-shop",
+      "effective_from": "2025-01-01", "effective_to": null,
+      "text": "收到商品破损、少配件、漏发或发错型号时，请保留外包装、面单及商品照片，并在签收后 {report_hours} 小时内优先反馈，方便人工核实。照片应能看清破损位置和包装情况。是否补寄、换货以及费用由人工根据证据确认；客服不能仅凭描述自动赔付、认定责任或编造补发快递单。",
+      "rules": {"report_hours": 48}
+    },
+    {
+      "id": "product-info", "version": 1, "title": "折叠键盘的连接方式与库存说明", "category": "products", "tenant_id": "demo-shop",
+      "effective_from": "2025-01-01", "effective_to": null,
+      "text": "演示目录中的折叠键盘支持蓝牙连接和 USB 有线连接；实际兼容性以商品说明和设备系统为准。首次配对前请按产品说明进入配对模式。该知识页不含实时库存、剩余数量、补货时间或所有设备的兼容列表，询问这些信息时需人工查询，不能根据静态说明猜测有货。这里的产品仅用于虚构电商演示。",
+      "rules": {}
+    },
+    {
+      "id": "delivery-proof", "version": 1, "title": "显示签收但未收到包裹", "category": "shipping", "tenant_id": "demo-shop",
+      "effective_from": "2025-01-01", "effective_to": null,
+      "text": "快递状态显示已签收但本人没收到包裹时，可先核对驿站、代收点和同住人是否代收，再联系人工向承运商申请签收凭证。系统显示签收不等于本人已收到，客服不能直接认定包裹丢失或责任方。需要调查时保留订单号、运单号和发现异常的时间；是否赔偿由核实结果决定。",
+      "rules": {}
+    },
+    {
+      "id": "other-benefit", "version": 1, "title": "琥珀礼遇兑换细则", "category": "promotion", "tenant_id": "other-shop",
+      "effective_from": "2025-01-01", "effective_to": null,
+      "text": "琥珀礼遇是 other-shop 虚构商店的独立活动，展示暗号为 AMBER-FICTION-42。琥珀礼遇兑换仅限该商店，不适用于 demo-shop。此活动仅供演示，不提供真实权益或兑换。",
+      "rules": {}
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tracedesk"
+version = "0.1.0"
+description = "Evidence-grounded customer support with constrained tools and confirmed actions"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE", "THIRD_PARTY_NOTICES.md"]
+authors = [{name = "Hokkaidoooo"}]
+dependencies = [
+  "fastapi>=0.124.4,<1",
+  "uvicorn>=0.33,<1",
+  "pydantic>=2.10.6,<3",
+  "httpx>=0.28.1,<1",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.3,<9", "ruff>=0.11,<1", "build>=1.2,<2"]
+
+[project.scripts]
+tracedesk = "tracedesk.cli:main"
+
+[project.urls]
+Repository = "https://github.com/Hokkaidoooo/tracedesk"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+tracedesk = ["data/*.json", "data/*.jsonl", "web/*", "web/assets/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-ra"
+filterwarnings = ["error::DeprecationWarning:tracedesk.*"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "B", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["E501"]

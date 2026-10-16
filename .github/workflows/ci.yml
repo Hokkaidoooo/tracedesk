@@ -1,0 +1,108 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  package:
+    name: ${{ matrix.os }} / Python ${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python: ['3.10', '3.12']
+    env:
+      PYTHONUTF8: '1'
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+          cache-dependency-path: requirements.lock
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install Python dependencies
+        run: python -m pip install -e ".[dev]" -c requirements.lock
+      - name: Install frontend dependencies
+        run: npm ci --prefix web
+      - name: Frontend type check
+        run: npm run typecheck --prefix web
+      - name: Frontend production build
+        run: npm run build --prefix web
+      - name: Packaged UI matches frontend source
+        run: git diff --exit-code -- src/tracedesk/web
+      - name: Python static checks
+        run: python -m ruff check src tests scripts
+      - name: Python formatting
+        run: python -m ruff format --check src tests scripts
+      - name: Behavior and transport tests
+        run: python -m pytest -q --junitxml=reports/junit.xml
+      - name: Retrieval ablations and workflow regression
+        run: python -m tracedesk.cli evaluate --output reports/evaluation.json
+      - name: Build distribution
+        run: python -m build --outdir dist
+      - name: Install wheel and exercise real HTTP outside checkout
+        run: python scripts/verify_wheel.py dist/tracedesk-0.1.0-py3-none-any.whl
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: validation-${{ matrix.os }}-${{ matrix.python }}
+          path: |
+            reports/
+            dist/
+          retention-days: 14
+
+  browser:
+    name: Chromium / real HTTP UI
+    runs-on: ubuntu-latest
+    env:
+      PYTHONUTF8: '1'
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: requirements.lock
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: python -m pip install -e ".[dev]" -c requirements.lock
+      - run: npm ci --prefix web
+      - run: npm run build --prefix web
+      - name: Install isolated CI browser
+        working-directory: web
+        run: npx playwright install --with-deps chromium
+      - name: Chinese fonts for visual regression
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fonts-noto-cjk
+      - name: Browser tests against the real backend
+        working-directory: web
+        run: npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-validation
+          path: |
+            web/test-results/
+            web/playwright-report/
+          retention-days: 14

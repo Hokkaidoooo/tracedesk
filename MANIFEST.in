@@ -1,0 +1,10 @@
+include README.md LICENSE THIRD_PARTY_NOTICES.md requirements.lock
+recursive-include docs *.md
+include web/index.html web/package.json web/package-lock.json web/tsconfig.json
+include web/vite.config.ts web/playwright.config.ts
+recursive-include web/src *.ts *.css
+recursive-include web/e2e *.ts
+recursive-include scripts *.py
+recursive-include tests *.py
+exclude STATUS.md
+global-exclude __pycache__ *.py[cod]
