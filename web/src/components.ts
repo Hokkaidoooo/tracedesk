@@ -158,12 +158,17 @@ export function renderCitations(citations: Citation[]): DocumentFragment {
     quote.dataset.testid = 'citation-quote';
     body.append(quote);
     const metadata = element('dl', 'citation-metadata');
-    metadata.append(definition('来源', citation.source_id), definition('生效日期', citation.effective_from), definition('失效日期', citation.effective_to ?? '未设定'), definition('检索分值', citation.score.toFixed(3)));
+    metadata.append(definition('来源', citation.source_id), definition('生效日期', citation.effective_from), definition('失效日期', citation.effective_to ?? '未设定'));
+    metadata.append(citation.score === null
+      ? definition('依据来源', '按政策版本直接读取')
+      : definition('检索分值', citation.score.toFixed(3)));
     body.append(metadata);
     details.append(summary, body);
     fragment.append(details);
   });
-  fragment.append(element('p', 'retrieval-note', '检索分值用于排列引用，不代表回答正确率。'));
+  if (citations.some((citation) => citation.score !== null)) {
+    fragment.append(element('p', 'retrieval-note', '检索分值用于排列引用，不代表回答正确率。'));
+  }
   return fragment;
 }
 
@@ -219,7 +224,7 @@ function renderWorkflowCases(cases: WorkflowCase[]): HTMLElement {
 export function renderEvaluation(report: EvaluationReport): DocumentFragment {
   const fragment = document.createDocumentFragment();
   const scope = element('section', 'evaluation-scope');
-  scope.append(element('h2', undefined, '结果适用范围'), element('p', undefined, report.scope), element('p', 'scope-limitation', '以下是固定合成数据上的回归结果，不代表真实客户满意度或线上模型准确率。'));
+  scope.append(element('h2', undefined, '结果适用范围'), element('p', undefined, report.scope));
   const metadata = element('div', 'report-metadata');
   metadata.append(element('span', undefined, `生成时间 ${new Date(report.generated_at).toLocaleString('zh-CN', { hour12: false })}`));
   const hash = element('details', 'dataset-hash');

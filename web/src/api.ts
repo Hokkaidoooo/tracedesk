@@ -34,7 +34,7 @@ export interface Citation {
   version: number;
   effective_from: string;
   effective_to: string | null;
-  score: number;
+  score: number | null;
 }
 
 export interface Order {
@@ -199,7 +199,7 @@ function citation(value: unknown): Citation {
     version: integer(item.version, 'citation.version'),
     effective_from: string(item.effective_from, 'citation.effective_from'),
     effective_to: nullableString(item.effective_to, 'citation.effective_to'),
-    score: number(item.score, 'citation.score'),
+    score: item.score === null ? null : number(item.score, 'citation.score'),
   };
 }
 

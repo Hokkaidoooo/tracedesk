@@ -1,5 +1,7 @@
 # TraceDesk
 
+[![CI](https://github.com/Hokkaidoooo/tracedesk/actions/workflows/ci.yml/badge.svg)](https://github.com/Hokkaidoooo/tracedesk/actions/workflows/ci.yml)
+
 带知识来源、工具执行记录和确认流程的客服 Agent。可以查询商店政策和订单，核对退货条件，在用户确认后创建退款申请。
 
 项目同时提供两种明确区分的运行方式：`extractive` 使用中文检索和原文摘录，无需模型密钥；`llm` 使用支持 function calling 的聊天模型选择工具。模型故障会显式报错，不会切换到另一种模式。
@@ -45,6 +47,8 @@ tracedesk serve
 60 条固定合成检索用例中，BM25、字符 n-gram、RRF 的 Recall@3 均为 **90.625%**；MRR 分别为 **90.278%、91.667%、90.625%**。因此应用默认采用 n-gram，融合保留为可切换对照。16 个提取式业务工作流回归全部通过。
 
 评测保留未完整召回的用例；这些数字不是线上模型准确率。详见 [原始报告](src/tracedesk/data/evaluation.json) 与 [指标、失败案例和复现条件](docs/evaluation.md)。
+
+工程验证覆盖 Windows / Ubuntu × Python 3.10 / 3.12，每组 **202 项测试**，以及 **7 项 Chromium 浏览器测试**。发行 wheel 在源码目录之外安装并完成真实 HTTP 申请闭环，详见 [验证范围与反例](docs/validation.md)。
 
 ## 文档
 

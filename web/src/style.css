@@ -251,7 +251,6 @@ svg { display: block; fill: none; stroke: currentColor; stroke-width: 1.6; strok
 .evaluation-scope { padding: 19px 23px; border-left: 3px solid #a8c18a; background: #f0f5e8; }
 .evaluation-scope h2 { color: var(--muted); font-size: 12px; font-weight: 650; margin-bottom: 9px; }
 .evaluation-scope p { font-size: 11px; color: var(--muted); line-height: 1.9; white-space: pre-wrap; overflow-wrap: anywhere; }
-.evaluation-scope .scope-limitation { color: var(--muted); margin-top: 6px; font-size: 10px; }
 .report-metadata { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 14px 28px; padding: 14px 0 24px; color: var(--muted); font-size: 10px; line-height: 1.7; }
 .dataset-hash { max-width: 100%; }
 .dataset-hash summary { cursor: pointer; }

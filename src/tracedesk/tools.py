@@ -41,7 +41,7 @@ def describe_order(order: dict[str, Any]) -> str:
     )
 
 
-def citation(document: Document, score: float, quote: str | None = None) -> dict[str, Any]:
+def citation(document: Document, score: float | None, quote: str | None = None) -> dict[str, Any]:
     return {
         "source_id": document.source_id,
         "title": document.title,
@@ -76,7 +76,7 @@ class ToolExecutor:
     ) -> None:
         self.store, self.knowledge, self.refunds = store, knowledge, refunds
         self.settings, self.session, self.run_id, self.trace = settings, session, run_id, trace
-        self.evidence: dict[str, tuple[Document, float]] = {}
+        self.evidence: dict[str, tuple[Document, float | None]] = {}
         self.order: dict[str, Any] | None = None
         self.action: dict[str, Any] | None = None
         self.final: dict[str, Any] | None = None
@@ -212,7 +212,7 @@ class ToolExecutor:
             "returns", tenant_id=self.session["tenant_id"], as_of=self.store.now().date()
         )
         if policy is not None:
-            self.evidence[policy.source_id] = (policy, 0.0)
+            self.evidence[policy.source_id] = (policy, None)
         self.action = self.refunds.prepare(self.session, args.order_id, args.reason, self.run_id)
         self.order = self.store.get_order(self.session, args.order_id)
         return self._prepared_result(replayed=False)
@@ -226,7 +226,7 @@ class ToolExecutor:
         return {
             "action": safe_action,
             "replayed": replayed,
-            "policy": citation(policy, 0.0) if policy else None,
+            "policy": citation(policy, None) if policy else None,
             "_trace_detail": f"申请 {self.action['id']} 待用户确认；尚未提交。",
         }
 

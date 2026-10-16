@@ -60,10 +60,7 @@ class SupportAgent:
         run = self.store.start_run(session, message, request_id, self.settings.provider)
         if run["replayed"]:
             if run.get("error"):
-                saved = run["error"]
-                raise DomainError(
-                    saved["code"], saved["message"], saved["status_code"], saved.get("details")
-                )
+                raise self._restore_error(run["error"], run["id"])
             return run["turn"]
         trace = Trace()
         executor = ToolExecutor(
@@ -121,18 +118,30 @@ class SupportAgent:
             error = DomainError(
                 exc.code, exc.message, exc.status_code, {**exc.details, "run_id": run["id"]}
             )
-            self._record_failure(executor, error)
+            error = self._record_failure(executor, error)
             raise error from exc
         except Exception as exc:
             # This outer boundary persists the real failure and logs its traceback; it never fabricates a turn.
             LOGGER.exception("Unhandled TraceDesk run failure: %s", run["id"])
             error = DomainError(
-                "INTERNAL_ERROR", "本轮执行失败，运行记录已标记为失败。", 500, {"run_id": run["id"]}
+                "INTERNAL_ERROR",
+                "本轮执行失败，请查看服务日志与运行状态。",
+                500,
+                {"run_id": run["id"]},
             )
-            self._record_failure(executor, error)
+            error = self._record_failure(executor, error)
             raise error from exc
 
-    def _record_failure(self, executor: ToolExecutor, error: DomainError) -> None:
+    @staticmethod
+    def _restore_error(saved: dict[str, Any], run_id: str) -> DomainError:
+        return DomainError(
+            saved["code"],
+            saved["message"],
+            saved["status_code"],
+            {**saved.get("details", {}), "run_id": run_id},
+        )
+
+    def _record_failure(self, executor: ToolExecutor, error: DomainError) -> DomainError:
         if executor.action and executor.action["state"] == "pending":
             started = executor.trace.start()
             try:
@@ -148,7 +157,21 @@ class SupportAgent:
         executor.trace.add(
             "failure", "本轮失败", "error", f"{error.code}：{error.message}", started
         )
-        self.store.fail_run(executor.session, executor.run_id, error, executor.trace.events)
+        try:
+            self.store.fail_run(executor.session, executor.run_id, error, executor.trace.events)
+        except DomainError as storage_error:
+            if storage_error.code != "RUN_NOT_ACTIVE":
+                raise
+            recorded = self.store.run_details(executor.session, executor.run_id)
+            LOGGER.warning(
+                "Run %s is already %s; preserving its recorded terminal state",
+                executor.run_id,
+                recorded["status"],
+            )
+            if recorded.get("error"):
+                return self._restore_error(recorded["error"], executor.run_id)
+            error.details["recorded_status"] = recorded["status"]
+        return error
 
     async def _model_turn(self, executor: ToolExecutor, message: str) -> None:
         assert self.provider is not None

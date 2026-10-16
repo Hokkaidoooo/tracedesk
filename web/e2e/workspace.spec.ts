@@ -66,6 +66,7 @@ test('查阅退货政策，展开原文并查看执行记录', async ({ page }) 
   expect(turn.runtime).toBe('extractive');
   expect(turn.citations.length).toBeGreaterThan(0);
   expect(turn.trace.length).toBeGreaterThan(0);
+  expect(typeof turn.citations[0].score).toBe('number');
   expect(turn.action).toBeNull();
 
   await page.getByTestId('assistant-message').last().locator('.reference-button').first().click();
@@ -74,6 +75,7 @@ test('查阅退货政策，展开原文并查看执行记录', async ({ page }) 
   await expect(citation).toContainText(turn.citations[0].source_id);
   await expect(citation).toContainText(`v${turn.citations[0].version}`);
   await expect(citation).toContainText(turn.citations[0].effective_from);
+  await expect(citation).toContainText('检索分值');
   await citation.locator('summary').click();
   await expect(citation).toHaveJSProperty('open', false);
   await citation.locator('summary').press('Enter');
@@ -99,6 +101,7 @@ test('核对订单与售后金额，确认申请后取得真实回执', async ({
   expect(turn.action?.amount_minor).toBe(orderTurn.order?.amount_minor);
   expect(turn.citations.length).toBeGreaterThan(0);
   const action = turn.action!;
+  expect(turn.citations[0].score).toBeNull();
   const pending = page.getByTestId('refund-card').last();
   await expect(pending).toHaveAttribute('data-state', 'pending');
   await expect(pending).toContainText(new Intl.NumberFormat('zh-CN', {
@@ -109,6 +112,9 @@ test('核对订单与售后金额，确认申请后取得真实回执', async ({
 
   await page.getByTestId('assistant-message').last().locator('.reference-button').first().click();
   await expect(page.getByTestId('citation-quote').first()).toHaveText(turn.citations[0].quote);
+  await expect(page.locator('.citation-card').first()).toContainText('依据来源');
+  await expect(page.locator('.citation-card').first()).toContainText('按政策版本直接读取');
+  await expect(page.locator('.citation-card').first()).not.toContainText('检索分值');
   await pending.scrollIntoViewIfNeeded();
   await expectNoHorizontalOverflow(page);
   await saveScreenshot(page, 'desktop-pending.png');
@@ -294,6 +300,8 @@ test('评测页展示已有真实报告的范围和指标', async ({ page }) => 
   }
   await expect(page.getByRole('heading', { name: '回归评测', exact: true })).toBeVisible();
   await expect(page.locator('.evaluation-scope')).toContainText(report.scope);
+  await expect(page.locator('.evaluation-scope p')).toHaveCount(1);
+  await expect(page.locator('.evaluation-scope p')).toHaveText(report.scope);
   await expect(page.getByTestId('evaluation-metrics')).toContainText(`${report.workflow.passed} / ${report.workflow.total}`);
   await expect(page.locator('.metrics-table tbody tr')).toHaveCount(methods.length);
   await expect(page.locator('.workflow-case')).toHaveCount(report.workflow.cases.length);

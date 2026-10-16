@@ -1,7 +1,7 @@
 import asyncio
 import json
 from dataclasses import replace
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from uuid import uuid4
 
 import pytest
@@ -103,6 +103,7 @@ def test_followup_uses_persisted_order_and_no_money_is_moved(tmp_path):
     assert result["action"]["order_id"] == "TD-1001"
     assert result["action"]["amount_minor"] == 12900
     assert result["status"] == "needs_confirmation"
+    assert result["citations"][0]["score"] is None
     assert service.store.get_order(session, "TD-1001")["status"] == "delivered"
 
 
@@ -259,3 +260,32 @@ def test_llm_runs_registered_tools_with_server_compiled_answer(tmp_path):
         "final_answer",
     }
     assert "customer_id" not in json.dumps(schemas)
+
+
+def test_expired_run_preserves_the_recorded_interruption_and_replay_identity(tmp_path):
+    clock = [NOW]
+
+    class AdvancingProvider:
+        async def complete(self, messages, tools):
+            clock[0] += timedelta(seconds=301)
+            return reply(
+                ("final_answer", {"status": "needs_information", "clarification": "order_id"})
+            )
+
+    settings = Settings(
+        database_path=tmp_path / "lease.db", provider="llm", base_url="http://127.0.0.1:1/v1"
+    )
+    service = create_services(settings, provider=AdvancingProvider(), clock=lambda: clock[0])
+    created = service.store.create_session("customer-a")
+    session = service.store.authenticate(created["token"])
+    request_id = str(uuid4())
+    with pytest.raises(DomainError) as first:
+        ask(service, session, "我想退款", request_id)
+    assert first.value.code == "INTERRUPTED"
+    run_id = first.value.details["run_id"]
+    assert service.store.run_details(session, run_id)["status"] == "interrupted"
+    with pytest.raises(DomainError) as replay:
+        ask(service, session, "我想退款", request_id)
+    assert replay.value.code == "INTERRUPTED"
+    assert replay.value.details["run_id"] == run_id
+    assert service.store.list_turns(session) == []

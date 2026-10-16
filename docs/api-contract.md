@@ -25,7 +25,7 @@
   "answer": "已准备退款申请，请核对后确认。",
   "status": "needs_confirmation",
   "runtime": "extractive",
-  "citations": [{"source_id": "returns@2", "title": "退货与退款", "quote": "可核对的原文", "version": 2, "effective_from": "2026-01-01", "effective_to": null, "score": 0.0}],
+  "citations": [{"source_id": "returns@2", "title": "退货与退款", "quote": "可核对的原文", "version": 2, "effective_from": "2026-01-01", "effective_to": null, "score": null}],
   "order": {"id": "TD-1001", "product": "折叠键盘", "amount_minor": 12900, "currency": "CNY", "status": "delivered", "delivered_at": "2026-10-14T00:00:00Z", "version": 1},
   "action": {"id": "action-id", "kind": "refund_request", "state": "pending", "order_id": "TD-1001", "amount_minor": 12900, "currency": "CNY", "reason": "用户申请退款", "expires_at": "2026-10-16T12:00:00Z", "confirmation_token": "one-time-secret"},
   "trace": [{"seq": 1, "stage": "retrieve", "label": "检索政策", "status": "ok", "detail": "命中 2 条生效知识", "duration_ms": 1.2}],
@@ -34,6 +34,8 @@
 ```
 
 `status` 为 `answered`、`needs_information`、`needs_confirmation`、`handoff`。`order`、`action` 可为 null。`runtime` 为 `extractive` 或 `llm`。引用内容来自本次工具结果；运行记录只保存可观察事件，不保存模型思维链。
+
+`score` 为数字时是对应检索方法的实际排序分数，不是回答正确率；按政策版本直接读取的依据返回 `null`，不能解释为零相似度。
 
 ## 售后申请
 
