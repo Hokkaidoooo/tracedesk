@@ -11,6 +11,7 @@ from uuid import uuid4
 
 from .bootstrap import create_services
 from .errors import DomainError
+from .knowledge_cli import EXTENDED_COMMANDS, add_commands, execute
 from .settings import Settings
 
 
@@ -20,22 +21,27 @@ def _write_json(path: Path, data: dict) -> None:
 
 
 async def _probe(settings: Settings) -> dict:
-    from .provider import ChatCompletionsProvider
-
     if settings.provider != "llm":
         raise ValueError("probe-model 需要 TRACEDESK_PROVIDER=llm 及完整模型配置。")
     with TemporaryDirectory(prefix="tracedesk-probe-") as temporary:
         service = create_services(replace(settings, database_path=Path(temporary) / "probe.db"))
-        created = service.store.create_session("customer-a")
-        session = service.store.authenticate(created["token"])
         try:
+            created = service.store.create_session("customer-a")
+            session = service.store.authenticate(created["token"])
             turn = await service.agent.ask(
                 session, "签收后多久可以退货？请给出政策依据。", str(uuid4())
             )
             return {key: turn[key] for key in ("status", "runtime", "answer", "citations", "trace")}
         finally:
-            if isinstance(service.provider, ChatCompletionsProvider):
-                await service.provider.close()
+            await service.close()
+
+
+async def _extended(args: argparse.Namespace, settings: Settings) -> tuple[dict, int]:
+    services = create_services(settings)
+    try:
+        return await execute(args, services)
+    finally:
+        await services.close()
 
 
 def main() -> int:
@@ -56,6 +62,7 @@ def main() -> int:
     evaluate = commands.add_parser("evaluate", help="运行固定用例的检索消融和工作流回归")
     evaluate.add_argument("--output", type=Path, default=Path("reports/evaluation.json"))
     commands.add_parser("probe-model", help="对配置的真实模型执行一次带来源的工具调用")
+    add_commands(commands)
     args = parser.parse_args()
     try:
         if args.command == "evaluate":
@@ -74,7 +81,26 @@ def main() -> int:
                 )
             )
             return 0 if report["workflow"]["passed"] == report["workflow"]["total"] else 1
+        if (
+            args.command == "evaluate-knowledge"
+            and args.output.resolve().name.casefold() == "evaluation.json"
+        ):
+            raise ValueError("知识评测不能覆盖原 evaluation.json，请使用独立输出文件名。")
         settings = Settings.from_env()
+        if getattr(args, "database", None) is not None:
+            settings = replace(settings, database_path=args.database)
+        if args.command in EXTENDED_COMMANDS:
+            data, code = asyncio.run(_extended(args, settings))
+            if args.command == "evaluate-knowledge":
+                _write_json(args.output, data)
+                data = {
+                    "report": str(args.output.resolve()),
+                    "status": data["status"],
+                    "snapshot_id": data["snapshot"]["id"],
+                    "metrics": data["metrics"],
+                }
+            print(json.dumps(data, ensure_ascii=False, indent=2))
+            return code
         if args.command == "probe-model":
             print(json.dumps(asyncio.run(_probe(settings)), ensure_ascii=False, indent=2))
             return 0
@@ -82,15 +108,13 @@ def main() -> int:
             raise ValueError(
                 "公开监听须显式加 --allow-public-demo；此版本仅提供演示身份，不适合真实客户数据。"
             )
-        if args.database is not None:
-            settings = replace(settings, database_path=args.database)
         import uvicorn
 
         from .api import create_app
 
         uvicorn.run(create_app(settings), host=args.host, port=args.port)
         return 0
-    except (ValueError, DomainError) as exc:
+    except (ValueError, DomainError, OSError) as exc:
         print(f"TraceDesk 配置或执行错误：{exc}", file=sys.stderr)
         return 2
 

@@ -1,14 +1,18 @@
 """A bounded chat-completions transport; tool execution lives outside the model."""
 
+from __future__ import annotations
+
 import asyncio
 import json
 from dataclasses import dataclass
-from typing import Any, Protocol
+from typing import TYPE_CHECKING, Any, Protocol
 
 import httpx
 
 from .errors import DomainError
-from .settings import Settings
+
+if TYPE_CHECKING:
+    from .settings import Settings
 
 MAX_RESPONSE_BYTES = 256_000
 MAX_TOOL_ARGUMENT_CHARS = 6000

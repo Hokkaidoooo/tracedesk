@@ -2,14 +2,20 @@
 
 import json
 from collections.abc import Callable
+from contextlib import AsyncExitStack
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from importlib.resources import as_file, files
 from typing import Any
 
 from .agent import SupportAgent
+from .graphs import GraphService
+from .graphs.examples import SemanticCypherExamples
+from .knowledge import KnowledgeService
+from .knowledge_workflows import KnowledgeWorkflows
 from .provider import ChatCompletionsProvider, ModelProvider
 from .refunds import RefundService
+from .resources import close_on_exit
 from .retrieval import KnowledgeBase
 from .settings import Settings
 from .store import Store
@@ -32,6 +38,16 @@ class Services:
     refunds: RefundService
     agent: SupportAgent
     provider: ModelProvider | None
+    documents: KnowledgeService
+    graphs: GraphService
+    workflows: KnowledgeWorkflows
+
+    async def close(self) -> None:
+        async with AsyncExitStack() as closing:
+            if isinstance(self.provider, ChatCompletionsProvider):
+                await closing.enter_async_context(close_on_exit(self.provider.close))
+            await closing.enter_async_context(close_on_exit(self.graphs.close))
+            await closing.enter_async_context(close_on_exit(self.documents.close))
 
 
 def create_services(
@@ -57,5 +73,18 @@ def create_services(
     refunds = RefundService(store, knowledge, action_ttl_seconds=settings.action_ttl_seconds)
     if settings.provider == "llm" and provider is None:
         provider = ChatCompletionsProvider(settings)
-    agent = SupportAgent(store, knowledge, refunds, settings, provider)
-    return Services(settings, store, knowledge, refunds, agent, provider)
+    documents = KnowledgeService(store, settings.knowledge)
+    examples = SemanticCypherExamples(documents._embedder, settings.knowledge)
+    graphs = GraphService(settings.graphs, provider=provider, examples=examples)
+    workflows = KnowledgeWorkflows(
+        store,
+        documents,
+        graphs,
+        provider,
+        settings.research,
+        history_limit=settings.max_history_turns,
+    )
+    agent = SupportAgent(store, knowledge, refunds, settings, provider, workflows)
+    return Services(
+        settings, store, knowledge, refunds, agent, provider, documents, graphs, workflows
+    )

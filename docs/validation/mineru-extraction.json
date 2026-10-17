@@ -1,0 +1,138 @@
+{
+  "checked_at": "2026-10-17T07:11:50.429943+00:00",
+  "integration_status": "passed",
+  "content_validation_status": "failed",
+  "integration": "Real official MinerU CLI v0.5.9 flash-extract through KnowledgeService",
+  "sample": {
+    "filename": "sample-v2.pdf",
+    "sha256": "e8830d926854493b38eca82c3b9504a092a4df8765d5ba5709e25157d9afcee8",
+    "synthetic": true,
+    "pages": 1
+  },
+  "source_roundtrip": true,
+  "page_metadata": "Not supplied by flash Markdown; preserved as null",
+  "table_cells": [
+    {
+      "row": 1,
+      "column": 1,
+      "expected": "Product",
+      "actual": "Product",
+      "match": true
+    },
+    {
+      "row": 1,
+      "column": 2,
+      "expected": "Parameter",
+      "actual": "Parameter",
+      "match": true
+    },
+    {
+      "row": 1,
+      "column": 3,
+      "expected": "Value",
+      "actual": "Value",
+      "match": true
+    },
+    {
+      "row": 2,
+      "column": 1,
+      "expected": "X100",
+      "actual": "X100",
+      "match": true
+    },
+    {
+      "row": 2,
+      "column": 2,
+      "expected": "Video output",
+      "actual": "Video output",
+      "match": true
+    },
+    {
+      "row": 2,
+      "column": 3,
+      "expected": "DP Alt Mode",
+      "actual": "DP AIt Mode",
+      "match": false
+    },
+    {
+      "row": 3,
+      "column": 1,
+      "expected": "Y20",
+      "actual": "Y20",
+      "match": true
+    },
+    {
+      "row": 3,
+      "column": 2,
+      "expected": "HDMI limit",
+      "actual": "HDMI limit",
+      "match": true
+    },
+    {
+      "row": 3,
+      "column": 3,
+      "expected": "4K 60Hz",
+      "actual": "4K 60Hz",
+      "match": true
+    },
+    {
+      "row": 4,
+      "column": 1,
+      "expected": "Z90",
+      "actual": "Z90",
+      "match": true
+    },
+    {
+      "row": 4,
+      "column": 2,
+      "expected": "Protocol",
+      "actual": "Protocol",
+      "match": true
+    },
+    {
+      "row": 4,
+      "column": 3,
+      "expected": "Thunderbolt 4",
+      "actual": "Thunderbolt 4",
+      "match": true
+    }
+  ],
+  "matching_cells": 11,
+  "total_cells": 12,
+  "limits": [
+    "An OCR character substitution remains in the indexed text and was not silently corrected.",
+    "This receipt does not verify the self-hosted HTTP parser or page localization."
+  ],
+  "extracted_blocks": [
+    {
+      "kind": "text",
+      "text": "# TraceDesk document parser sample",
+      "page": null,
+      "source_sha256": "e8830d926854493b38eca82c3b9504a092a4df8765d5ba5709e25157d9afcee8"
+    },
+    {
+      "kind": "text",
+      "text": "以下产品资料均为虚构测试数据。",
+      "page": null,
+      "source_sha256": "e8830d926854493b38eca82c3b9504a092a4df8765d5ba5709e25157d9afcee8"
+    },
+    {
+      "kind": "text",
+      "text": "Product specification table",
+      "page": null,
+      "source_sha256": "e8830d926854493b38eca82c3b9504a092a4df8765d5ba5709e25157d9afcee8"
+    },
+    {
+      "kind": "table",
+      "text": "<table><tr><td rowspan=1 colspan=1> Product</td><td rowspan=1 colspan=1> Parameter</td><td rowspan=1 colspan=1>Value</td></tr><tr><td rowspan=1 colspan=1>X100</td><td rowspan=1 colspan=1> Video output</td><td rowspan=1 colspan=1>DP AIt Mode</td></tr><tr><td rowspan=1 colspan=1>Y20</td><td rowspan=1 colspan=1>HDMI limit</td><td rowspan=1 colspan=1>4K 60Hz</td></tr><tr><td rowspan=1 colspan=1>Z90</td><td rowspan=1 colspan=1>Protocol</td><td rowspan=1 colspan=1>Thunderbolt 4</td></tr></table>",
+      "page": null,
+      "source_sha256": "e8830d926854493b38eca82c3b9504a092a4df8765d5ba5709e25157d9afcee8"
+    },
+    {
+      "kind": "text",
+      "text": "Y20 requires a USB-C cable that supports video.",
+      "page": null,
+      "source_sha256": "e8830d926854493b38eca82c3b9504a092a4df8765d5ba5709e25157d9afcee8"
+    }
+  ]
+}

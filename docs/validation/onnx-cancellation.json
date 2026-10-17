@@ -1,0 +1,41 @@
+{
+  "onnxruntime": "1.23.2",
+  "model": "Xenova/bge-small-zh-v1.5",
+  "results": [
+    {
+      "mode": "cancel",
+      "native_error": "Fail",
+      "error_chain": [
+        "CancelledError",
+        "CancelledError",
+        "Fail"
+      ],
+      "worker_exited_before_return": true,
+      "terminate": true,
+      "native_started_before_cancel": true,
+      "native_finished_after_cancel": true,
+      "shutdown_seconds": 0.006438,
+      "next_call_dimensions": 512,
+      "next_call_norm": 1,
+      "fresh_run_options": true
+    },
+    {
+      "mode": "timeout",
+      "native_error": "Fail",
+      "error_chain": [
+        "TimeoutError",
+        "CancelledError",
+        "CancelledError",
+        "Fail"
+      ],
+      "worker_exited_before_return": true,
+      "terminate": true,
+      "native_started_before_cancel": true,
+      "native_finished_after_cancel": true,
+      "shutdown_seconds": 0.006105,
+      "next_call_dimensions": 512,
+      "next_call_norm": 1,
+      "fresh_run_options": true
+    }
+  ]
+}

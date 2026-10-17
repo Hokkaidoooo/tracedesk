@@ -1,5 +1,5 @@
-include README.md LICENSE THIRD_PARTY_NOTICES.md requirements.lock
-recursive-include docs *.md
+include README.md LICENSE THIRD_PARTY_NOTICES.md requirements.lock .env.example
+recursive-include docs *.md *.json *.pdf
 recursive-include assets *.png *.md
 include web/index.html web/package.json web/package-lock.json web/tsconfig.json
 include web/vite.config.ts web/playwright.config.ts

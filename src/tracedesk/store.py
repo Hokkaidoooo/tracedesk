@@ -15,8 +15,16 @@ from uuid import uuid4
 
 from .errors import DomainError
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 BUSY_TIMEOUT_MS = 5_000
+REQUEST_SCHEMA = (
+    "ALTER TABLE runs ADD COLUMN request_context TEXT NOT NULL DEFAULT '{}'",
+    """CREATE TRIGGER run_request_is_immutable BEFORE UPDATE ON runs
+        WHEN NEW.id != OLD.id OR NEW.session_id != OLD.session_id
+        OR NEW.request_id != OLD.request_id OR NEW.message != OLD.message
+        OR NEW.runtime != OLD.runtime OR NEW.request_context != OLD.request_context
+        BEGIN SELECT RAISE(ABORT, 'run request is immutable'); END""",
+)
 
 SCHEMA = (
     """CREATE TABLE metadata (key TEXT PRIMARY KEY NOT NULL, value TEXT NOT NULL)""",
@@ -226,7 +234,7 @@ class Store:
                 raise DomainError("DATABASE_CONFIGURATION", "数据库无法启用 WAL 日志模式。", 500)
             connection.execute("BEGIN IMMEDIATE")
             version = connection.execute("PRAGMA user_version").fetchone()[0]
-            if version not in (0, SCHEMA_VERSION):
+            if version not in (0, 1, SCHEMA_VERSION):
                 raise DomainError(
                     "SCHEMA_INCOMPATIBLE", "数据库版本不兼容，必须先执行明确的数据迁移。", 500
                 )
@@ -236,9 +244,15 @@ class Store:
                 ).fetchone()
                 if existing is not None:
                     raise DomainError("SCHEMA_INCOMPATIBLE", "未识别的已有数据库，拒绝覆盖。", 500)
-                for statement in SCHEMA:
+                for statement in self._schema(SCHEMA_VERSION):
                     connection.execute(statement)
                 connection.execute(f"PRAGMA user_version = {SCHEMA_VERSION}")
+            else:
+                self._validate_schema(connection, version)
+                if version == 1:
+                    for statement in self._schema(SCHEMA_VERSION)[len(SCHEMA) :]:
+                        connection.execute(statement)
+                    connection.execute(f"PRAGMA user_version = {SCHEMA_VERSION}")
             seeded = connection.execute(
                 "SELECT value FROM metadata WHERE key = 'seeded'"
             ).fetchone()
@@ -248,6 +262,50 @@ class Store:
             connection.commit()
         finally:
             connection.close()
+
+    @staticmethod
+    def _schema(version: int) -> tuple[str, ...]:
+        if version == 1:
+            return SCHEMA
+        from .knowledge.schema import KNOWLEDGE_SCHEMA
+
+        return SCHEMA + KNOWLEDGE_SCHEMA + REQUEST_SCHEMA
+
+    @classmethod
+    def _validate_schema(cls, connection: sqlite3.Connection, version: int) -> None:
+        """Refuse damaged or hand-altered databases before migrating their data."""
+        expected = sqlite3.connect(":memory:")
+        try:
+            for statement in cls._schema(version):
+                expected.execute(statement)
+            if cls._schema_objects(connection) != cls._schema_objects(expected):
+                raise DomainError(
+                    "SCHEMA_INCOMPATIBLE", "数据库结构与声明版本不符，拒绝自动迁移。", 500
+                )
+        finally:
+            expected.close()
+        integrity = connection.execute("PRAGMA quick_check").fetchall()
+        foreign_keys = connection.execute("PRAGMA foreign_key_check").fetchall()
+        seeded = connection.execute("SELECT value FROM metadata WHERE key = 'seeded'").fetchone()
+        if (
+            [row[0] for row in integrity] != ["ok"]
+            or foreign_keys
+            or seeded is None
+            or seeded[0] != "1"
+        ):
+            raise DomainError(
+                "DATABASE_INTEGRITY", "已有数据库完整性校验失败，拒绝迁移或重新填充。", 500
+            )
+
+    @staticmethod
+    def _schema_objects(connection: sqlite3.Connection) -> set[tuple[str, str, str]]:
+        return {
+            (row[0], row[1], " ".join(row[2].split()))
+            for row in connection.execute(
+                """SELECT type, name, sql FROM sqlite_master
+                   WHERE name NOT LIKE 'sqlite_%' AND sql IS NOT NULL"""
+            )
+        }
 
     @staticmethod
     def _seed(connection: sqlite3.Connection, customers: list[dict], orders: list[dict]) -> None:
@@ -425,10 +483,27 @@ class Store:
                 (timestamp, json_text(error_payload(error)), json_text(trace), row["id"]),
             )
 
-    def start_run(self, session: dict, message: str, request_id: str, runtime: str) -> dict:
+    def start_run(
+        self,
+        session: dict,
+        message: str,
+        request_id: str,
+        runtime: str,
+        *,
+        request_context: dict | None = None,
+    ) -> dict:
         for name, value in (("message", message), ("request_id", request_id), ("runtime", runtime)):
             if not isinstance(value, str) or not value.strip():
                 raise ValueError(f"{name} must be a nonempty string.")
+        if request_context is not None and not isinstance(request_context, dict):
+            raise ValueError("Request context must be an object.")
+        context_json = json.dumps(
+            {} if request_context is None else request_context,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+            allow_nan=False,
+        )
         failure: DomainError | None = None
         result: dict = {}
         with self.transaction() as connection:
@@ -440,7 +515,7 @@ class Store:
                 (session["id"], request_id),
             ).fetchone()
             if existing is not None:
-                result, failure = self._replay_run(connection, existing, message)
+                result, failure = self._replay_run(connection, existing, message, context_json)
             elif (
                 connection.execute(
                     "SELECT 1 FROM runs WHERE session_id = ? AND status = 'running'",
@@ -454,14 +529,15 @@ class Store:
             else:
                 run_id = str(uuid4())
                 connection.execute(
-                    """INSERT INTO runs(id, session_id, request_id, message, runtime, status, created_at, lease_expires_at)
-                       VALUES (?, ?, ?, ?, ?, 'running', ?, ?)""",
+                    """INSERT INTO runs(id, session_id, request_id, message, runtime, request_context, status, created_at, lease_expires_at)
+                       VALUES (?, ?, ?, ?, ?, ?, 'running', ?, ?)""",
                     (
                         run_id,
                         session["id"],
                         request_id,
                         message,
                         runtime,
+                        context_json,
                         utc_text(now),
                         utc_text(now + timedelta(seconds=self.run_lease_seconds)),
                     ),
@@ -473,10 +549,12 @@ class Store:
 
     @staticmethod
     def _replay_run(
-        connection: sqlite3.Connection, run: sqlite3.Row, message: str
+        connection: sqlite3.Connection, run: sqlite3.Row, message: str, context_json: str
     ) -> tuple[dict, DomainError | None]:
-        if run["message"] != message:
-            return {}, DomainError("REQUEST_CONFLICT", "该请求 ID 已用于不同的消息。", 409)
+        if run["message"] != message or run["request_context"] != context_json:
+            return {}, DomainError(
+                "REQUEST_CONFLICT", "该请求 ID 已用于不同的消息、模式或知识版本。", 409
+            )
         if run["status"] == "running":
             return {}, DomainError("RUN_IN_PROGRESS", "该请求仍在执行中。", 409)
         result = {"id": run["id"], "replayed": True}
@@ -573,6 +651,7 @@ class Store:
             "id": row["id"],
             "status": row["status"],
             "runtime": row["runtime"],
+            "request_context": json.loads(row["request_context"]),
             "trace": json.loads(row["trace_json"]),
             "turn": json.loads(turn_row["payload_json"]) if turn_row is not None else None,
         }

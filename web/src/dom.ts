@@ -36,6 +36,8 @@ export function timestamp(value: string, timeOnly = false): string {
     : { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false });
 }
 
-export function runtimeLabel(runtime: 'extractive' | 'llm'): string {
-  return runtime === 'extractive' ? '提取式模式' : '模型模式';
+export function runtimeLabel(runtime: import('./api').Runtime): string {
+  if (runtime === 'extractive') return '提取式模式';
+  if (runtime === 'llm') return '模型模式';
+  return runtime.startsWith('research:multi:') ? '协作研究' : '单角色研究';
 }

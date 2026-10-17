@@ -4,10 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#123d3b" />
-    <meta name="description" content="TraceDesk 客服工作台：查阅政策、核对订单、确认售后申请。" />
+    <meta name="description" content="TraceDesk：查阅资料原文、核对订单、研究有依据的问题、确认售后申请。" />
     <title>TraceDesk · 客服工作台</title>
-    <script type="module" crossorigin src="/assets/index-CPd5GDrh.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-UMMIbziO.css">
+    <script type="module" crossorigin src="/assets/index-DLenDNCI.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-CQnAdQvL.css">
   </head>
   <body>
     <a class="skip-link" href="#message-input">跳到消息输入框</a>
@@ -22,6 +22,9 @@
           </button>
           <button class="rail-button" type="button" data-view="evaluation" title="回归评测">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3v17h17M8 15v-4M13 15V6M18 15V9"/></svg><span>评测</span>
+          </button>
+          <button class="rail-button" type="button" data-view="knowledge" title="资料库">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6a3 3 0 0 1 3 3v14a4 4 0 0 0-4-2H4V4ZM13 7a3 3 0 0 1 3-3h5v15h-4a4 4 0 0 0-4 2"/><path d="M7 8h3M7 12h3M16 8h2M16 12h2"/></svg><span>资料库</span>
           </button>
         </div>
         <div class="rail-footer" title="当前使用演示订单">
@@ -72,6 +75,17 @@
             </div>
             <div class="composer-area">
               <div class="message-feedback" id="message-feedback" role="alert" hidden></div>
+              <div class="conversation-mode-controls">
+                <label for="conversation-mode">咨询方式</label>
+                <select id="conversation-mode" disabled><option value="support">售后办理</option><option value="research" disabled>资料研究</option></select>
+                <div id="research-options" class="research-options" hidden>
+                  <label class="sr-only" for="research-mode">研究方式</label>
+                  <select id="research-mode"><option value="multi">协作研究</option><option value="single">单角色研究</option></select>
+                  <label class="sr-only" for="research-snapshot">研究资料版本</label>
+                  <select id="research-snapshot"><option value="">尚无已发布资料</option></select>
+                </div>
+              </div>
+              <p class="mode-hint" id="research-availability">正在读取资料研究状态。</p>
               <form id="message-form" class="composer">
                 <label class="sr-only" for="message-input">发送客服问题</label>
                 <textarea id="message-input" name="message" rows="2" maxlength="2000" placeholder="询问退换货政策，或输入订单号…" disabled></textarea>
@@ -83,11 +97,66 @@
           <aside class="inspector" aria-label="证据与执行记录">
             <div class="inspector-heading"><div><span class="eyebrow">本次回答</span><h2>证据与记录</h2></div><span class="inspector-index" id="inspector-count">—</span></div>
             <div class="inspector-tabs" role="tablist" aria-label="回答详情"><button id="evidence-tab" role="tab" type="button" aria-selected="true" aria-controls="evidence-content" tabindex="0" data-inspector="evidence">引用依据<span id="citation-count">0</span></button><button id="trace-tab" role="tab" type="button" aria-selected="false" aria-controls="trace-content" tabindex="-1" data-inspector="trace">执行记录<span id="trace-count">0</span></button></div>
-            <div class="inspector-content" id="evidence-content" role="tabpanel" aria-labelledby="evidence-tab"><div class="inspector-empty"><div class="empty-evidence-icon" aria-hidden="true">§</div><h3>查看回答的依据</h3><p>发送问题后，这里会列出引用的政策原文、版本与生效日期。</p></div></div>
+            <div class="inspector-content" id="evidence-content" role="tabpanel" aria-labelledby="evidence-tab"><div class="inspector-empty"><div class="empty-evidence-icon" aria-hidden="true">§</div><h3>查看回答的依据</h3><p>发送问题后，这里会列出引用原文、来源与资料版本。</p></div></div>
             <div class="inspector-content" id="trace-content" role="tabpanel" aria-labelledby="trace-tab" hidden></div>
             <div class="inspector-note"><span aria-hidden="true">ⓘ</span><p>执行记录展示实际发生的检索与操作。</p></div>
           </aside>
         </div>
+        <main class="knowledge-view" id="knowledge-view" aria-labelledby="knowledge-title" hidden>
+          <header class="knowledge-heading">
+            <div><span class="eyebrow">文档与来源</span><h1 id="knowledge-title">资料库</h1><p>上传资料，发布后查阅原文与关系路径。</p></div>
+            <div class="knowledge-identity"><label for="knowledge-customer">当前身份</label><select id="knowledge-customer" disabled><option>正在读取客户</option></select><button id="knowledge-refresh" type="button" class="button-secondary" disabled>刷新资料</button></div>
+          </header>
+          <div class="knowledge-feedback" id="knowledge-feedback" role="status" aria-live="polite"></div>
+          <div class="knowledge-capabilities" id="knowledge-capabilities"></div>
+          <div class="knowledge-layout">
+            <aside class="knowledge-tools" aria-label="资料管理">
+              <section class="knowledge-card">
+                <h2>上传资料</h2>
+                <form id="knowledge-upload-form">
+                  <label for="knowledge-file">选择文件</label><input id="knowledge-file" type="file" accept=".txt,.md,.markdown,.pdf" required disabled />
+                  <label for="knowledge-document-title">资料标题</label><input id="knowledge-document-title" type="text" maxlength="200" required placeholder="例如：设备售后指南" disabled />
+                  <p class="field-hint" id="knowledge-upload-hint">支持 UTF-8 TXT、Markdown 和 PDF。</p>
+                  <button id="knowledge-upload" type="submit" class="button-primary" disabled>上传并解析</button>
+                </form>
+              </section>
+              <section class="knowledge-card">
+                <h2>发布资料版本</h2><p class="section-description">发布后开始检索新资料，历史版本仍可查阅。</p>
+                <div class="index-options">
+                  <label><input type="checkbox" checked disabled />词面检索</label>
+                  <label><input id="knowledge-build-embeddings" type="checkbox" disabled />语义与混合检索</label>
+                  <label><input id="knowledge-build-graph" type="checkbox" disabled />关系图</label>
+                </div>
+                <p class="field-hint" id="knowledge-build-hint"></p>
+                <button id="knowledge-build" type="button" class="button-primary" disabled>构建并发布</button>
+              </section>
+              <section class="knowledge-card sample-card">
+                <h2>从示例开始</h2><p class="section-description">加载原创售后示例资料和有来源的关系，体验检索。</p>
+                <button id="knowledge-demo" type="button" class="button-secondary" disabled>加载示例资料</button>
+              </section>
+            </aside>
+            <div class="knowledge-content">
+              <section class="knowledge-card" aria-labelledby="knowledge-documents-title">
+                <div class="knowledge-section-heading"><h2 id="knowledge-documents-title">文档与版本</h2><span id="knowledge-document-count">0 个版本</span></div>
+                <div id="knowledge-documents"><p class="knowledge-empty">连接会话后可查看资料。</p></div>
+              </section>
+              <section class="knowledge-card" aria-labelledby="knowledge-search-title">
+                <div class="knowledge-section-heading"><h2 id="knowledge-search-title">检索原文</h2><button id="knowledge-use-research" type="button" class="text-button" disabled>用此版本研究 ↗</button></div>
+                <p id="knowledge-current" class="section-description">尚无已发布资料。</p>
+                <div id="knowledge-method-status" class="method-readiness" role="status" hidden></div>
+                <form id="knowledge-search-form">
+                  <div class="knowledge-search-selects">
+                    <div><label for="knowledge-snapshot">资料版本</label><select id="knowledge-snapshot" disabled><option value="">尚无已发布资料</option></select></div>
+                    <div><label for="knowledge-method">检索方式</label><select id="knowledge-method" disabled><option value="lexical">词面检索</option></select></div>
+                  </div>
+                  <div class="knowledge-search-input"><label class="sr-only" for="knowledge-query">检索问题</label><input id="knowledge-query" type="search" maxlength="2000" required placeholder="输入要核对的问题或关键词" disabled /><button id="knowledge-search" type="submit" class="button-primary" disabled>检索</button></div>
+                </form>
+                <div class="knowledge-results" id="knowledge-results" aria-live="polite"><p class="knowledge-empty">选择已发布版本，查看对应的原文。</p></div>
+              </section>
+              <details class="knowledge-card knowledge-history"><summary>发布记录与构建状态</summary><div id="knowledge-history"><p class="knowledge-empty">暂无发布记录。</p></div></details>
+            </div>
+          </div>
+        </main>
         <main class="evaluation-view" id="evaluation-view" aria-labelledby="evaluation-title" hidden>
           <div class="evaluation-heading"><div><span class="eyebrow">固定合成回归集</span><h1 id="evaluation-title">回归评测</h1><p>查看已生成报告中的检索表现与工作流结果。</p></div><button class="button-secondary" id="refresh-evaluation" type="button">刷新报告</button></div>
           <div id="evaluation-content" aria-live="polite"></div>

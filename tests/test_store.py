@@ -10,7 +10,7 @@ from threading import Barrier
 import pytest
 
 from tracedesk.errors import DomainError
-from tracedesk.store import Store, utc_text
+from tracedesk.store import SCHEMA_VERSION, Store, utc_text
 
 NOW = datetime(2026, 10, 16, 12, tzinfo=timezone.utc)
 CUSTOMERS = [
@@ -86,7 +86,7 @@ def assert_error(code: str, callback, status: int | None = None) -> DomainError:
 def test_schema_and_hashed_bearer(environment) -> None:
     store, _, session, created = environment
     with store.transaction(write=False) as connection:
-        assert connection.execute("PRAGMA user_version").fetchone()[0] == 1
+        assert connection.execute("PRAGMA user_version").fetchone()[0] == SCHEMA_VERSION
         assert connection.execute("PRAGMA foreign_keys").fetchone()[0] == 1
         assert connection.execute("PRAGMA journal_mode").fetchone()[0] == "wal"
         assert connection.execute("PRAGMA busy_timeout").fetchone()[0] == 5000
@@ -357,3 +357,144 @@ def test_clock_requires_awareness_and_normalizes_utc(tmp_path: Path) -> None:
     aware = Store(tmp_path / "aware.db", clock=lambda: datetime(2026, 10, 16, 20, tzinfo=offset))
     assert aware.now() == NOW
     assert aware.now().tzinfo is timezone.utc
+
+
+def legacy_store(tmp_path: Path) -> Store:
+    from tracedesk.store import SCHEMA
+
+    path = tmp_path / "legacy.db"
+    with sqlite3.connect(path) as connection:
+        for statement in SCHEMA:
+            connection.execute(statement)
+        Store._seed(connection, CUSTOMERS, orders())
+        connection.execute("INSERT INTO metadata VALUES ('seeded', '1')")
+        connection.execute("PRAGMA user_version = 1")
+    return Store(path, clock=lambda: NOW)
+
+
+def test_schema_one_migration_preserves_real_refund_receipt_and_replay(tmp_path: Path) -> None:
+    from types import SimpleNamespace
+
+    from tracedesk.refunds import RefundService
+
+    class Catalog:
+        def get(self, document_id, *, tenant_id, as_of):
+            return SimpleNamespace(
+                source_id="returns@1",
+                rules={
+                    "window_days": 7,
+                    "allowed_statuses": ("delivered",),
+                    "excluded_categories": (),
+                },
+            )
+
+    store = legacy_store(tmp_path)
+    created = store.create_session("alice")
+    session = store.authenticate(created["token"])
+    # Seed the released v1 request shape before any v2 application migration runs.
+    run = {"id": "legacy-refund-run"}
+    with store.transaction() as connection:
+        connection.execute(
+            """INSERT INTO runs(id,session_id,request_id,message,runtime,status,created_at,lease_expires_at)
+               VALUES (?,?,'legacy-run','退款','extractive','running',?,?)""",
+            (run["id"], session["id"], utc_text(NOW), utc_text(NOW + timedelta(minutes=5))),
+        )
+    refunds = RefundService(store, Catalog())
+    action = refunds.prepare(session, "order-alice", "尺寸不合适", run["id"])
+    receipt = refunds.confirm(session, action["id"], action["confirmation_token"], "legacy-confirm")
+    with store.transaction(write=False) as connection:
+        tables = [
+            row[0]
+            for row in connection.execute(
+                "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'"
+            )
+        ]
+        columns = {
+            table: ",".join(row[1] for row in connection.execute(f"PRAGMA table_info({table})"))
+            for table in tables
+        }
+        before = {
+            table: [
+                tuple(row) for row in connection.execute(f"SELECT {columns[table]} FROM {table}")
+            ]
+            for table in tables
+        }
+    reopened = Store(store.database_path, clock=lambda: NOW)
+    reopened.initialize([], [])
+    with reopened.transaction(write=False) as connection:
+        assert connection.execute("PRAGMA user_version").fetchone()[0] == 2
+        assert connection.execute("PRAGMA foreign_key_check").fetchall() == []
+        after = {
+            table: [
+                tuple(row) for row in connection.execute(f"SELECT {columns[table]} FROM {table}")
+            ]
+            for table in tables
+        }
+        assert connection.execute("SELECT request_context FROM runs").fetchone()[0] == "{}"
+    assert before == after
+    restored = reopened.authenticate(created["token"])
+    replay = RefundService(reopened, Catalog()).confirm(
+        restored, action["id"], action["confirmation_token"], "legacy-confirm"
+    )
+    assert replay == {**receipt, "replayed": True}
+    reopened.initialize([], [])
+
+
+@pytest.mark.parametrize(
+    "corruption", ["missing_trigger", "foreign_key", "missing_seed", "extra_table"]
+)
+def test_schema_one_migration_rejects_damage_without_partial_upgrade(
+    tmp_path: Path, corruption: str
+) -> None:
+    store = legacy_store(tmp_path)
+    created = store.create_session("alice")
+    with sqlite3.connect(store.database_path) as connection:
+        if corruption == "missing_trigger":
+            connection.execute("DROP TRIGGER order_updates_advance_version")
+        elif corruption == "foreign_key":
+            connection.execute("UPDATE sessions SET last_order_id = 'missing-order'")
+        elif corruption == "missing_seed":
+            connection.execute("DELETE FROM metadata WHERE key = 'seeded'")
+        else:
+            connection.execute("CREATE TABLE private_extension(value TEXT)")
+            connection.execute("INSERT INTO private_extension VALUES ('keep')")
+    expected = (
+        "SCHEMA_INCOMPATIBLE"
+        if corruption in {"missing_trigger", "extra_table"}
+        else "DATABASE_INTEGRITY"
+    )
+    assert_error(expected, lambda: store.initialize([], []), 500)
+    with sqlite3.connect(store.database_path) as connection:
+        assert connection.execute("PRAGMA user_version").fetchone()[0] == 1
+        assert (
+            connection.execute(
+                "SELECT count(*) FROM sqlite_master WHERE name LIKE 'knowledge_%'"
+            ).fetchone()[0]
+            == 0
+        )
+        assert connection.execute("SELECT count(*) FROM sessions").fetchone()[0] == 1
+    assert store.authenticate(created["token"])["customer_id"] == "alice"
+
+
+def test_schema_migration_ddl_failure_rolls_back_every_added_object(
+    tmp_path: Path, monkeypatch
+) -> None:
+    import tracedesk.knowledge.schema as knowledge_schema
+
+    store = legacy_store(tmp_path)
+    monkeypatch.setattr(
+        knowledge_schema,
+        "KNOWLEDGE_SCHEMA",
+        (*knowledge_schema.KNOWLEDGE_SCHEMA, "INVALID SQL FOR ATOMIC MIGRATION TEST"),
+    )
+    with pytest.raises(sqlite3.OperationalError):
+        store.initialize([], [])
+    with sqlite3.connect(store.database_path) as connection:
+        assert connection.execute("PRAGMA user_version").fetchone()[0] == 1
+        assert connection.execute("SELECT count(*) FROM orders").fetchone()[0] == 3
+        assert (
+            connection.execute(
+                "SELECT count(*) FROM sqlite_master WHERE name LIKE 'knowledge_%'"
+            ).fetchone()[0]
+            == 0
+        )

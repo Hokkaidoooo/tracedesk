@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "origin": "tracedesk-authored",
+  "examples": [
+    {
+      "question": "购买的设备适用哪项质保政策？",
+      "cypher": "MATCH p=(a:Entity {name: \"示例设备\"})-[:`适用`*1..1]->(b:Entity) RETURN p LIMIT 5"
+    },
+    {
+      "question": "哪些商品适用这项退货规则？",
+      "cypher": "MATCH p=(a:Entity {name: \"示例退货规则\"})<-[:`适用`*1..1]-(b:Entity) RETURN p LIMIT 5"
+    },
+    {
+      "question": "这款商品通过售后方案关联了哪些凭证要求？",
+      "cypher": "MATCH p=(a:Entity {name: \"示例商品\"})-[:`采用`|`要求`*1..2]->(b:Entity) RETURN p LIMIT 5"
+    },
+    {
+      "question": "从指定商品到包装要求之间有哪些关联路径？",
+      "cypher": "MATCH p=(a:Entity {name: \"示例商品\"})-[:`适用`|`要求`*1..3]->(b:Entity {name: \"示例包装要求\"}) RETURN p LIMIT 5"
+    },
+    {
+      "question": "这项服务的相关节点有哪些，关联方向可以不限？",
+      "cypher": "MATCH p=(a:Entity {name: \"示例服务\"})-[:`关联`*1..2]-(b:Entity) RETURN p LIMIT 5"
+    },
+    {
+      "question": "哪些订单直接或间接依据这项检验标准？",
+      "cypher": "MATCH p=(a:Entity {name: \"示例检验标准\"})<-[:`引用`|`依据`*1..2]-(b:Entity) RETURN p LIMIT 5"
+    },
+    {
+      "question": "这项退货规则要求准备哪些材料？",
+      "cypher": "MATCH p=(a:Entity {name: \"示例退货规则\"})-[:`要求`*1..1]->(b:Entity) RETURN p LIMIT 5"
+    },
+    {
+      "question": "这项售后方案提供哪些处理流程？",
+      "cypher": "MATCH p=(a:Entity {name: \"示例售后方案\"})-[:`提供`*1..1]->(b:Entity) RETURN p LIMIT 5"
+    }
+  ]
+}

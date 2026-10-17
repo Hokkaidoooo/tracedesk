@@ -6,6 +6,10 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from urllib.parse import urlparse
 
+from .graphs import GraphConfig
+from .knowledge import KnowledgeConfig
+from .research import ResearchConfig
+
 
 @dataclass(frozen=True)
 class Settings:
@@ -25,6 +29,9 @@ class Settings:
     action_ttl_seconds: int = 600
     run_lease_seconds: int = 300
     demo_mode: bool = True
+    knowledge: KnowledgeConfig = field(default_factory=KnowledgeConfig)
+    graphs: GraphConfig = field(default_factory=GraphConfig)
+    research: ResearchConfig = field(default_factory=ResearchConfig)
 
     def __post_init__(self) -> None:
         if self.provider not in {"extractive", "llm"}:
@@ -90,4 +97,7 @@ class Settings:
             action_ttl_seconds=integer("ACTION_TTL_SECONDS", 600),
             run_lease_seconds=integer("RUN_LEASE_SECONDS", 300),
             demo_mode=demo == "true",
+            knowledge=KnowledgeConfig.from_env(),
+            graphs=GraphConfig.from_env(),
+            research=ResearchConfig.from_env(),
         )

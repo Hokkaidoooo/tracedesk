@@ -17,7 +17,8 @@ from starlette.exceptions import HTTPException
 from . import __version__
 from .bootstrap import create_services, resource
 from .errors import DomainError
-from .provider import ChatCompletionsProvider, ModelProvider
+from .knowledge_api import install_knowledge_routes
+from .provider import ModelProvider
 from .schemas import ConfirmAction, NewSession, NewTurn
 from .settings import Settings
 
@@ -33,9 +34,10 @@ def create_app(
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
-        yield
-        if isinstance(services.provider, ChatCompletionsProvider):
-            await services.provider.close()
+        try:
+            yield
+        finally:
+            await services.close()
 
     app = FastAPI(
         title="TraceDesk API", version=__version__, lifespan=lifespan, docs_url=None, redoc_url=None
@@ -97,6 +99,7 @@ def create_app(
             "demo": True,
             "retrieval_method": configured.retrieval_method,
             "business_date": services.store.now().date().isoformat(),
+            "knowledge": True,
         }
 
     @app.get("/api/demo/customers")
@@ -171,6 +174,8 @@ def create_app(
     @app.get("/health")
     def health() -> dict[str, Any]:
         return {"status": "ok", "version": __version__}
+
+    install_knowledge_routes(app, services, authenticated)
 
     web_root = Path(str(files("tracedesk").joinpath("web")))
     if (web_root / "assets").is_dir():

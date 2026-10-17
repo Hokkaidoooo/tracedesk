@@ -4,9 +4,12 @@ import { fileURLToPath } from 'node:url';
 import { expect, test } from '@playwright/test';
 import type { Page, Response } from '@playwright/test';
 import type { CreatedSession, EvaluationReport, LoadedSession, Receipt, Turn } from '../src/api';
+import { isDocumentEvidence } from '../src/api';
 
 const POLICY_QUESTION = '签收后多久可以退货？';
-const SCREENSHOT_DIRECTORY = fileURLToPath(new URL('../test-results/screenshots/', import.meta.url));
+const SCREENSHOT_DIRECTORY = process.env.TRACEDESK_E2E_OUTPUT_DIR
+  ? join(process.env.TRACEDESK_E2E_OUTPUT_DIR, 'screenshots')
+  : fileURLToPath(new URL('../test-results/screenshots/', import.meta.url));
 
 function isSessionCreation(response: Response): boolean {
   return new URL(response.url()).pathname === '/api/sessions' && response.request().method() === 'POST';
@@ -71,10 +74,12 @@ test('查阅退货政策，展开原文并查看执行记录', async ({ page }) 
 
   await page.getByTestId('assistant-message').last().locator('.reference-button').first().click();
   const citation = page.locator('.citation-card').first();
+  const policy = turn.citations[0];
+  if (isDocumentEvidence(policy)) throw new Error('售后政策查询应返回政策引用。');
   await expect(page.getByTestId('citation-quote').first()).toHaveText(turn.citations[0].quote);
   await expect(citation).toContainText(turn.citations[0].source_id);
-  await expect(citation).toContainText(`v${turn.citations[0].version}`);
-  await expect(citation).toContainText(turn.citations[0].effective_from);
+  await expect(citation).toContainText(`v${policy.version}`);
+  await expect(citation).toContainText(policy.effective_from);
   await expect(citation).toContainText('检索分值');
   await citation.locator('summary').click();
   await expect(citation).toHaveJSProperty('open', false);
@@ -153,12 +158,12 @@ test('权限不足或无知识依据时，明确转交人工', async ({ page }) 
   expect(unknown.citations).toHaveLength(0);
   expect(unknown.order).toBeNull();
   expect(unknown.action).toBeNull();
-  await expect(page.locator('#evidence-content')).toContainText('本次没有政策引用');
+  await expect(page.locator('#evidence-content')).toContainText('本次没有引用依据');
   await expect(page.getByTestId('assistant-message').last()).toContainText('建议人工处理');
   await expect(page.getByTestId('refund-card')).toHaveCount(0);
 });
 
-test('切换演示客户后开启独立会话，原会话仍可读取', async ({ page }) => {
+test('切换演示客户后开启独立会话，切回后可读取原客户会话', async ({ page }) => {
   const original = await startSession(page);
   const turn = await sendMessage(page, POLICY_QUESTION);
   const creationPromise = page.waitForResponse(isSessionCreation);
@@ -170,6 +175,11 @@ test('切换演示客户后开启独立会话，原会话仍可读取', async ({
   expect(other.customer.id).toBe('customer-b');
   await expect(page.getByTestId('assistant-message')).toHaveCount(0);
   await expect(page.locator('#conversation-title')).toContainText(other.customer.name);
+  await expect(page.locator('.session-button').filter({ hasText: POLICY_QUESTION })).toHaveCount(0);
+
+  const backPromise = page.waitForResponse(isSessionCreation);
+  await page.getByLabel('演示身份', { exact: true }).selectOption('customer-a');
+  expect((await backPromise).ok()).toBe(true);
 
   const historyPromise = page.waitForResponse((result) =>
     new URL(result.url()).pathname === `/api/sessions/${original.id}`

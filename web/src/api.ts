@@ -1,5 +1,6 @@
-export type Runtime = 'extractive' | 'llm';
-export type TurnStatus = 'answered' | 'needs_confirmation' | 'needs_information' | 'handoff';
+export type ResearchMode = 'single' | 'multi';
+export type Runtime = 'extractive' | 'llm' | `research:${ResearchMode}:${string}`;
+export type TurnStatus = 'answered' | 'needs_confirmation' | 'needs_information' | 'handoff' | 'partially_supported' | 'insufficient_evidence';
 export type ActionState = 'pending' | 'submitted' | 'cancelled' | 'expired';
 
 export interface AppInfo {
@@ -27,7 +28,7 @@ export interface CreatedSession {
   created_at: string;
 }
 
-export interface Citation {
+export interface PolicyCitation {
   source_id: string;
   title: string;
   quote: string;
@@ -35,6 +36,30 @@ export interface Citation {
   effective_from: string;
   effective_to: string | null;
   score: number | null;
+}
+
+export interface DocumentEvidence {
+  source_id: string;
+  tenant_id: string;
+  snapshot_id: string;
+  document_id: string;
+  document_version: number;
+  title: string;
+  text: string;
+  quote: string;
+  source_sha256: string;
+  page: number | null;
+  kind: 'text' | 'table';
+  score: number | null;
+  method: string;
+  graph_path: string[];
+  claim_id?: string;
+}
+
+export type Citation = PolicyCitation | DocumentEvidence;
+
+export function isDocumentEvidence(citation: Citation): citation is DocumentEvidence {
+  return 'snapshot_id' in citation;
 }
 
 export interface Order {
@@ -136,52 +161,52 @@ export class ApiError extends Error {
 
 type RecordValue = Record<string, unknown>;
 
-function invalid(field: string): never {
+export function invalid(field: string): never {
   throw new ApiError('INVALID_RESPONSE', `服务响应字段 ${field} 不符合接口约定，请检查服务状态。`);
 }
 
-function record(value: unknown, field: string): RecordValue {
+export function record(value: unknown, field: string): RecordValue {
   if (typeof value !== 'object' || value === null || Array.isArray(value)) invalid(field);
   return value as RecordValue;
 }
 
-function string(value: unknown, field: string): string {
+export function string(value: unknown, field: string): string {
   if (typeof value !== 'string') invalid(field);
   return value;
 }
 
-function number(value: unknown, field: string): number {
+export function number(value: unknown, field: string): number {
   if (typeof value !== 'number' || !Number.isFinite(value)) invalid(field);
   return value;
 }
 
-function integer(value: unknown, field: string): number {
+export function integer(value: unknown, field: string): number {
   const result = number(value, field);
   if (!Number.isSafeInteger(result) || result < 0) invalid(field);
   return result;
 }
 
-function boolean(value: unknown, field: string): boolean {
+export function boolean(value: unknown, field: string): boolean {
   if (typeof value !== 'boolean') invalid(field);
   return value;
 }
 
-function array<T>(value: unknown, field: string, decode: (item: unknown) => T): T[] {
+export function array<T>(value: unknown, field: string, decode: (item: unknown) => T): T[] {
   if (!Array.isArray(value)) invalid(field);
   return value.map(decode);
 }
 
-function choice<T extends string>(value: unknown, field: string, choices: readonly T[]): T {
+export function choice<T extends string>(value: unknown, field: string, choices: readonly T[]): T {
   const result = string(value, field);
   if (!choices.includes(result as T)) invalid(field);
   return result as T;
 }
 
-function optionalString(value: unknown, field: string): string | undefined {
+export function optionalString(value: unknown, field: string): string | undefined {
   return value === undefined || value === null ? undefined : string(value, field);
 }
 
-function nullableString(value: unknown, field: string): string | null {
+export function nullableString(value: unknown, field: string): string | null {
   return value === null ? null : string(value, field);
 }
 
@@ -192,6 +217,7 @@ function customer(value: unknown): Customer {
 
 function citation(value: unknown): Citation {
   const item = record(value, 'citation');
+  if ('snapshot_id' in item) return documentEvidence(item);
   return {
     source_id: string(item.source_id, 'citation.source_id'),
     title: string(item.title, 'citation.title'),
@@ -201,6 +227,36 @@ function citation(value: unknown): Citation {
     effective_to: nullableString(item.effective_to, 'citation.effective_to'),
     score: item.score === null ? null : number(item.score, 'citation.score'),
   };
+}
+
+export function documentEvidence(value: unknown): DocumentEvidence {
+  const item = record(value, 'evidence');
+  const page = item.page === null ? null : integer(item.page, 'evidence.page');
+  if (page === 0) invalid('evidence.page');
+  const digest = string(item.source_sha256, 'evidence.source_sha256');
+  if (!/^[a-f0-9]{64}$/.test(digest)) invalid('evidence.source_sha256');
+  return {
+    source_id: string(item.source_id, 'evidence.source_id'),
+    tenant_id: string(item.tenant_id, 'evidence.tenant_id'),
+    snapshot_id: string(item.snapshot_id, 'evidence.snapshot_id'),
+    document_id: string(item.document_id, 'evidence.document_id'),
+    document_version: integer(item.document_version, 'evidence.document_version'),
+    title: string(item.title, 'evidence.title'),
+    text: string(item.text, 'evidence.text'),
+    quote: string(item.quote, 'evidence.quote'),
+    source_sha256: digest, page,
+    kind: choice(item.kind, 'evidence.kind', ['text', 'table'] as const),
+    score: item.score === null ? null : number(item.score, 'evidence.score'),
+    method: string(item.method, 'evidence.method'),
+    graph_path: array(item.graph_path, 'evidence.graph_path', (entry) => string(entry, 'graph_path.entry')),
+    claim_id: optionalString(item.claim_id, 'evidence.claim_id'),
+  };
+}
+
+function runtime(value: unknown): Runtime {
+  const name = string(value, 'turn.runtime');
+  if (name === 'extractive' || name === 'llm' || /^research:(single|multi):[^:]+$/.test(name)) return name as Runtime;
+  return invalid('turn.runtime');
 }
 
 function order(value: unknown): Order {
@@ -256,8 +312,8 @@ function turn(value: unknown): Turn {
     request_id: string(item.request_id, 'turn.request_id'),
     message: string(item.message, 'turn.message'),
     answer: string(item.answer, 'turn.answer'),
-    status: choice(item.status, 'turn.status', ['answered', 'needs_confirmation', 'needs_information', 'handoff'] as const),
-    runtime: choice(item.runtime, 'turn.runtime', ['extractive', 'llm'] as const),
+    status: choice(item.status, 'turn.status', ['answered', 'needs_confirmation', 'needs_information', 'handoff', 'partially_supported', 'insufficient_evidence'] as const),
+    runtime: runtime(item.runtime),
     citations: array(item.citations, 'turn.citations', citation),
     order: item.order === null ? null : order(item.order),
     action: item.action === null ? null : action(item.action),
@@ -324,17 +380,23 @@ function evaluation(value: unknown): EvaluationReport {
   };
 }
 
-async function request<T>(path: string, decode: (data: unknown) => T, token?: string, body?: unknown): Promise<T> {
-  const headers: Record<string, string> = { Accept: 'application/json' };
-  if (token) headers.Authorization = `Bearer ${token}`;
-  if (body !== undefined) headers['Content-Type'] = 'application/json';
+export interface TransportOptions {
+  token?: string;
+  body?: BodyInit;
+  method?: 'GET' | 'POST';
+  contentType?: string;
+  accept?: string;
+  signal?: AbortSignal;
+}
 
+export async function transport(path: string, options: TransportOptions = {}): Promise<Response> {
+  const headers: Record<string, string> = { Accept: options.accept ?? 'application/json' };
+  if (options.token) headers.Authorization = `Bearer ${options.token}`;
+  if (options.contentType) headers['Content-Type'] = options.contentType;
   let response: Response;
   try {
     response = await fetch(`/api${path}`, {
-      method: body === undefined ? 'GET' : 'POST',
-      headers,
-      body: body === undefined ? undefined : JSON.stringify(body),
+      method: options.method ?? 'GET', headers, body: options.body, signal: options.signal,
       cache: 'no-store',
       credentials: 'omit',
       redirect: 'error',
@@ -342,20 +404,38 @@ async function request<T>(path: string, decode: (data: unknown) => T, token?: st
   } catch {
     throw new ApiError('NETWORK_ERROR', '无法连接服务。请检查连接后重试；本次输入仍然保留。');
   }
+  if (!response.ok) {
+    const envelope = record(await responseJson(response), 'error response');
+    const error = record(envelope.error, 'error');
+    throw new ApiError(string(error.code, 'error.code'), string(error.message, 'error.message'), response.status);
+  }
+  return response;
+}
 
-  let data: unknown;
+export async function responseJson(response: Response): Promise<unknown> {
   try {
-    data = await response.json();
+    return await response.json();
   } catch {
     throw new ApiError('INVALID_RESPONSE', `服务返回了无法解析的响应（HTTP ${response.status}）。`, response.status);
   }
 
-  if (!response.ok) {
-    const envelope = record(data, 'error response');
-    const error = record(envelope.error, 'error');
-    throw new ApiError(string(error.code, 'error.code'), string(error.message, 'error.message'), response.status);
-  }
-  return decode(data);
+}
+
+export async function request<T>(
+  path: string, decode: (data: unknown) => T, token?: string, body?: unknown, signal?: AbortSignal,
+): Promise<T> {
+  const response = await transport(path, {
+    token, signal, method: body === undefined ? 'GET' : 'POST',
+    body: body === undefined ? undefined : JSON.stringify(body),
+    contentType: body === undefined ? undefined : 'application/json',
+  });
+  return decode(await responseJson(response));
+}
+
+export function asApiError(error: unknown): ApiError {
+  if (error instanceof ApiError) return error;
+  if (error instanceof Error) return new ApiError('CLIENT_ERROR', error.message);
+  return new ApiError('CLIENT_ERROR', '页面遇到未知错误，请重新连接后重试。');
 }
 
 export const api = {
@@ -385,6 +465,10 @@ export const api = {
   session: (id: string, token: string) => request(`/sessions/${encodeURIComponent(id)}`, loadedSession, token),
   sendTurn: (id: string, token: string, message: string, requestId: string) => request(
     `/sessions/${encodeURIComponent(id)}/turns`, turn, token, { message, request_id: requestId },
+  ),
+  research: (id: string, token: string, message: string, requestId: string, mode: ResearchMode, snapshotId: string) => request(
+    `/sessions/${encodeURIComponent(id)}/research`, turn, token,
+    { message, request_id: requestId, mode, snapshot_id: snapshotId },
   ),
   confirm: (id: string, token: string, confirmationToken: string, requestId: string) => request(
     `/actions/${encodeURIComponent(id)}/confirm`, receipt, token, { confirmation_token: confirmationToken, request_id: requestId },

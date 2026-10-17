@@ -1,5 +1,5 @@
-import { ApiError } from './api';
-import type { ActionState, Citation, EvaluationReport, Order, Receipt, RefundAction, TraceEvent, Turn, WorkflowCase } from './api';
+import { ApiError, isDocumentEvidence } from './api';
+import type { ActionState, Citation, DocumentEvidence, EvaluationReport, Order, Receipt, RefundAction, TraceEvent, Turn, WorkflowCase } from './api';
 import { button, definition, element, money, runtimeLabel, timestamp } from './dom';
 
 export interface ActionView {
@@ -20,6 +20,7 @@ interface TurnContext {
 
 const turnStatusLabels: Record<Turn['status'], string> = {
   answered: '已回复', needs_confirmation: '待确认', needs_information: '待补充信息', handoff: '建议人工处理',
+  partially_supported: '部分结论有依据', insufficient_evidence: '证据不足',
 };
 
 const orderStatusLabels: Record<string, string> = {
@@ -122,7 +123,8 @@ export function renderTurn(turn: Turn, context: TurnContext): HTMLElement {
     const references = element('div', 'reference-links');
     turn.citations.forEach((citation, index) => {
       const reference = button(`${index + 1} · ${citation.title}`, 'reference-button', () => context.inspect('evidence', index));
-      reference.setAttribute('aria-label', `查看引用 ${index + 1}：${citation.title}，版本 ${citation.version}`);
+      const version = isDocumentEvidence(citation) ? citation.document_version : citation.version;
+      reference.setAttribute('aria-label', `查看引用 ${index + 1}：${citation.title}，版本 ${version}`);
       references.append(reference);
     });
     assistant.append(references);
@@ -138,11 +140,11 @@ export function renderTurn(turn: Turn, context: TurnContext): HTMLElement {
   return section;
 }
 
-export function renderCitations(citations: Citation[]): DocumentFragment {
+export function renderCitations(citations: Citation[], download?: (source: DocumentEvidence) => void): DocumentFragment {
   const fragment = document.createDocumentFragment();
   if (!citations.length) {
     const empty = element('div', 'inspector-empty');
-    empty.append(element('div', 'empty-evidence-icon', '§'), element('h3', undefined, '本次没有政策引用'), element('p', undefined, '可切换到执行记录，查看此次请求实际完成的操作。'));
+    empty.append(element('div', 'empty-evidence-icon', '§'), element('h3', undefined, '本次没有引用依据'), element('p', undefined, '可切换到执行记录，查看此次请求实际完成的操作。'));
     fragment.append(empty);
     return fragment;
   }
@@ -152,17 +154,34 @@ export function renderCitations(citations: Citation[]): DocumentFragment {
     details.dataset.citationIndex = String(index);
     details.open = index === 0;
     const summary = element('summary');
-    summary.append(element('span', 'citation-index', String(index + 1)), element('strong', undefined, citation.title), element('span', 'citation-version', `v${citation.version}`));
+    const version = isDocumentEvidence(citation) ? citation.document_version : citation.version;
+    summary.append(element('span', 'citation-index', String(index + 1)), element('strong', undefined, citation.title), element('span', 'citation-version', `v${version}`));
     const body = element('div', 'citation-body');
     const quote = element('blockquote', 'citation-quote', citation.quote);
     quote.dataset.testid = 'citation-quote';
     body.append(quote);
     const metadata = element('dl', 'citation-metadata');
-    metadata.append(definition('来源', citation.source_id), definition('生效日期', citation.effective_from), definition('失效日期', citation.effective_to ?? '未设定'));
+    metadata.append(definition('来源', citation.source_id));
+    if (isDocumentEvidence(citation)) {
+      metadata.append(
+        definition('资料版本', citation.snapshot_id),
+        definition('页码', citation.page === null ? '不提供页码' : `第 ${citation.page} 页`),
+        definition('内容类型', citation.kind === 'table' ? '表格' : '正文'),
+        definition('SHA-256', citation.source_sha256),
+        definition('检索方式', citation.method),
+      );
+      if (citation.graph_path.length) metadata.append(definition('关系路径', citation.graph_path.join(' → ')));
+      if (citation.claim_id) metadata.append(definition('结论编号', citation.claim_id));
+    } else {
+      metadata.append(definition('生效日期', citation.effective_from), definition('失效日期', citation.effective_to ?? '未设定'));
+    }
     metadata.append(citation.score === null
-      ? definition('依据来源', '按政策版本直接读取')
+      ? definition('依据来源', isDocumentEvidence(citation) ? '按资料版本读取原文' : '按政策版本直接读取')
       : definition('检索分值', citation.score.toFixed(3)));
     body.append(metadata);
+    if (download && isDocumentEvidence(citation)) {
+      body.append(button('下载原件', 'text-button source-download', () => download(citation)));
+    }
     details.append(summary, body);
     fragment.append(details);
   });
@@ -189,7 +208,7 @@ export function renderTrace(trace: TraceEvent[], runId: string): DocumentFragmen
     const heading = element('div', 'trace-heading');
     heading.append(element('strong', undefined, event.label), element('span', 'trace-time', `${event.duration_ms.toFixed(1)} ms`));
     const meta = element('div', 'trace-meta');
-    const labels: Record<string, string> = { ok: '完成', denied: '已拒绝', error: '失败', skipped: '已跳过', blocked: '已阻止' };
+    const labels: Record<string, string> = { ok: '完成', denied: '已拒绝', error: '失败', skipped: '已跳过', blocked: '已阻止', partial: '部分支持', rejected: '未获支持' };
     meta.append(element('span', 'monospace', event.stage), element('span', 'trace-state', labels[event.status] ?? event.status));
     body.append(heading, element('p', undefined, event.detail), meta);
     row.append(body);

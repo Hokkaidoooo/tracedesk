@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tracedesk"
-version = "0.1.0"
+version = "0.2.0"
 description = "Evidence-grounded customer support with constrained tools and confirmed actions"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -20,6 +20,10 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8.3,<9", "ruff>=0.11,<1", "build>=1.2,<2"]
+research = ["langgraph>=1.2.16,<2"]
+graph = ["neo4j>=5.28,<6"]
+semantic = ["onnxruntime>=1.23.2,<1.24", "tokenizers>=0.22,<0.23", "numpy>=1.26,<3"]
+graphrag = ["graphrag==2.7.0"]
 
 [project.scripts]
 tracedesk = "tracedesk.cli:main"
@@ -31,7 +35,7 @@ Repository = "https://github.com/Hokkaidoooo/tracedesk"
 where = ["src"]
 
 [tool.setuptools.package-data]
-tracedesk = ["data/*.json", "data/*.jsonl", "web/*", "web/assets/*"]
+tracedesk = ["data/*.json", "data/*.jsonl", "data/knowledge-demo/*.md", "web/*", "web/assets/*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

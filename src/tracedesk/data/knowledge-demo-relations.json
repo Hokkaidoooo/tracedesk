@@ -1,0 +1,8 @@
+[
+  {"subject":"X100","predicate":"COMPATIBLE_WITH","object":"Y20","document":"X100 主机产品说明","quote":"X100 兼容 Y20 扩展坞。"},
+  {"subject":"X100","predicate":"SUPPORTS","object":"DP Alt Mode","document":"X100 主机产品说明","quote":"X100 的 USB-C 接口支持 DP Alt Mode 视频输出。"},
+  {"subject":"X100","predicate":"INCOMPATIBLE_WITH","object":"Z90","document":"X100 主机产品说明","quote":"不兼容需要 Thunderbolt 4 的 Z90 扩展坞"},
+  {"subject":"Y20","predicate":"USES","object":"DP Alt Mode","document":"Y20 扩展坞产品说明","quote":"Y20 使用 DP Alt Mode 协议输出视频。"},
+  {"subject":"Y20","predicate":"SUPPORTS","object":"4K 60Hz","document":"Y20 扩展坞产品说明","quote":"Y20 的 HDMI 接口最高支持 4K 60Hz"},
+  {"subject":"Z90","predicate":"REQUIRES","object":"Thunderbolt 4","document":"Z90 扩展坞产品说明","quote":"Z90 需要 Thunderbolt 4 主机接口。"}
+]

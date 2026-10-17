@@ -1,14 +1,24 @@
 import './style.css';
-import { api, ApiError } from './api';
-import type { AppInfo, CreatedSession, DemoCustomer, EvaluationReport, Turn } from './api';
+import { api, ApiError, asApiError } from './api';
+import type { AppInfo, CreatedSession, DemoCustomer, EvaluationReport, ResearchMode, Turn } from './api';
 import { errorBlock, renderCitations, renderEvaluation, renderTrace, renderTurn } from './components';
 import type { ActionView } from './components';
 import { button, element, required, runtimeLabel } from './dom';
+import type { KnowledgeCatalog } from './knowledge-api';
+import { KnowledgeView, snapshotLabel } from './knowledge-view';
+
+type PendingRequest = { message: string; requestId: string } & (
+  { kind: 'support' } | { kind: 'research'; mode: ResearchMode; snapshotId: string }
+);
 
 interface SessionView extends CreatedSession {
   turns: Turn[];
   draft: string;
-  pendingRequest?: { message: string; requestId: string };
+  taskMode: 'support' | 'research';
+  researchMode: ResearchMode;
+  researchModeSelected: boolean;
+  snapshotId: string | null;
+  pendingRequest?: PendingRequest;
   sendError?: ApiError;
 }
 
@@ -30,6 +40,9 @@ const dom = {
   trace: required('#trace-content'),
   evaluation: required('#evaluation-content'),
   refreshEvaluation: required<HTMLButtonElement>('#refresh-evaluation'),
+  taskMode: required<HTMLSelectElement>('#conversation-mode'),
+  researchMode: required<HTMLSelectElement>('#research-mode'),
+  researchSnapshot: required<HTMLSelectElement>('#research-snapshot'),
 };
 
 const welcome = dom.log.firstElementChild?.cloneNode(true);
@@ -49,16 +62,11 @@ const state = {
   evaluation: null as EvaluationReport | null,
   evaluationLoading: false,
   evaluationAttempted: false,
+  catalog: null as KnowledgeCatalog | null,
 };
 
 function activeSession(): SessionView | undefined {
   return state.sessions.find((session) => session.id === state.activeId);
-}
-
-function asApiError(error: unknown): ApiError {
-  if (error instanceof ApiError) return error;
-  if (error instanceof Error) return new ApiError('CLIENT_ERROR', error.message);
-  return new ApiError('CLIENT_ERROR', '页面遇到未知错误，请重新连接后重试。');
 }
 
 function announce(message: string): void {
@@ -82,7 +90,10 @@ function updateControls(): void {
   dom.newSession.disabled = disabled || !state.ready;
   dom.input.disabled = !session;
   dom.input.readOnly = disabled;
-  dom.send.disabled = disabled || !session || !dom.input.value.trim();
+  renderResearchControls();
+  const researchUnavailable = session?.taskMode === 'research'
+    && (!state.catalog?.capabilities.research || !session.snapshotId);
+  dom.send.disabled = disabled || !session || !dom.input.value.trim() || researchUnavailable;
   dom.send.setAttribute('aria-label', disabled ? state.busy ?? '处理中' : '发送消息');
   dom.form.setAttribute('aria-busy', String(disabled));
   required('#character-count').textContent = `${dom.input.value.length} / 2000`;
@@ -92,7 +103,40 @@ function updateControls(): void {
   const mode = state.info ? runtimeLabel(state.info.runtime) : '正在连接服务';
   required('#composer-caption').textContent = disabled
     ? `${state.busy}…`
-    : `${mode} · 演示售后申请不会产生真实退款。`;
+    : session?.taskMode === 'research'
+      ? '研究只依据所选资料版本作答，请结合引用核对结论。'
+      : `${mode} · 演示售后申请不会产生真实退款。`;
+  knowledge.setIdentityBusy(disabled || !state.ready);
+}
+
+function renderResearchControls(): void {
+  const session = activeSession();
+  const published = state.catalog?.snapshots.filter((item) => item.status === 'published') ?? [];
+  const enabled = Boolean(state.catalog?.capabilities.research && published.length);
+  dom.taskMode.disabled = state.busy !== null || !session;
+  required<HTMLOptionElement>('#conversation-mode option[value="research"]').disabled = !enabled;
+  dom.taskMode.value = session?.taskMode ?? 'support';
+  required('#research-options').hidden = session?.taskMode !== 'research';
+  dom.researchMode.disabled = state.busy !== null || !enabled;
+  dom.researchMode.value = session?.researchMode ?? 'multi';
+  dom.researchSnapshot.replaceChildren(...published.map((snapshot) => {
+    const option = element('option', undefined, snapshotLabel(snapshot, state.catalog?.current_snapshot?.id));
+    option.value = snapshot.id;
+    return option;
+  }));
+  if (!published.length) dom.researchSnapshot.append(element('option', undefined, '尚无已发布资料'));
+  if (session && !session.snapshotId && state.catalog?.current_snapshot) {
+    session.snapshotId = state.catalog.current_snapshot.id;
+  }
+  dom.researchSnapshot.value = session?.snapshotId ?? '';
+  dom.researchSnapshot.disabled = state.busy !== null || !enabled;
+  required('#research-availability').textContent = !state.catalog
+    ? '正在读取资料研究状态。'
+    : !state.catalog.capabilities.research
+      ? '资料研究尚未启用，资料库仍可检索已发布的原文。'
+      : !published.length
+        ? '先在资料库发布资料，再开始研究。'
+        : '协作研究和单角色研究都会核验引用证据。';
 }
 
 function setBusy(label: string | null): void {
@@ -131,7 +175,7 @@ function renderInspector(): void {
     dom.trace.replaceChildren(empty);
     return;
   }
-  dom.evidence.replaceChildren(renderCitations(turn.citations));
+  dom.evidence.replaceChildren(renderCitations(turn.citations, (source) => { void knowledge.downloadEvidence(source); }));
   dom.trace.replaceChildren(renderTrace(turn.trace, turn.run_id));
 }
 
@@ -157,7 +201,8 @@ function inspectTurn(turnId: string, tab: InspectorTab, citationIndex?: number):
 
 function renderSessionList(): void {
   const fragment = document.createDocumentFragment();
-  state.sessions.slice().reverse().forEach((session) => {
+  const sessions = state.sessions.filter((session) => session.customer.id === dom.customerSelect.value);
+  sessions.slice().reverse().forEach((session) => {
     const node = button('', `session-button${session.id === state.activeId ? ' active' : ''}`, () => { void openSession(session.id); });
     node.disabled = state.busy !== null;
     if (session.id === state.activeId) node.setAttribute('aria-current', 'true');
@@ -166,9 +211,9 @@ function renderSessionList(): void {
     node.append(element('span', 'session-symbol', '⌑'), text);
     fragment.append(node);
   });
-  if (!state.sessions.length) fragment.append(element('p', 'sidebar-empty', '连接后可开始会话'));
+  if (!sessions.length) fragment.append(element('p', 'sidebar-empty', '连接后可开始会话'));
   dom.sessionList.replaceChildren(fragment);
-  required('#session-count').textContent = String(state.sessions.length);
+  required('#session-count').textContent = String(sessions.length);
 }
 
 function renderMessageFeedback(): void {
@@ -177,7 +222,7 @@ function renderMessageFeedback(): void {
   dom.messageFeedback.replaceChildren();
   if (error) {
     dom.messageFeedback.append(errorBlock(error, () => { void sendMessage(); }, '重试发送'));
-    dom.messageFeedback.append(element('p', 'retry-hint', '重试会沿用此次请求编号。修改问题后，将作为新请求发送。'));
+    dom.messageFeedback.append(element('p', 'retry-hint', '重试保留原问题、研究方式、资料版本与请求编号。修改任一项后，将发送新请求。'));
   }
 }
 
@@ -220,23 +265,34 @@ function showCustomerOrders(): void {
 
 async function createSession(customerId: string): Promise<void> {
   if (state.busy) return;
+  const previous = activeSession();
+  const previousTurn = state.selectedTurnId;
   setBusy('正在新建会话');
   clearGlobalError();
+  state.activeId = null;
+  state.selectedTurnId = null;
+  dom.customerSelect.value = customerId;
+  knowledge.setSession(null, state.customers, customerId);
+  renderAll();
   try {
     const created = await api.createSession(customerId);
-    state.sessions.push({ ...created, turns: [], draft: '' });
+    state.sessions.push({ ...created, turns: [], draft: '', taskMode: 'support', researchMode: 'multi', researchModeSelected: false, snapshotId: null });
     state.activeId = created.id;
     state.selectedTurnId = null;
     dom.customerSelect.value = created.customer.id;
+    knowledge.setSession(created, state.customers, created.customer.id);
     showCustomerOrders();
     selectPanel('conversation');
     setInspector('evidence');
     renderAll();
     announce(`已为${created.customer.name}创建会话。`);
   } catch (error) {
-    const previous = activeSession();
+    state.activeId = previous?.id ?? null;
+    state.selectedTurnId = previousTurn;
     if (previous) dom.customerSelect.value = previous.customer.id;
+    knowledge.setSession(previous ?? null, state.customers, dom.customerSelect.value);
     showCustomerOrders();
+    renderAll();
     showGlobalError(error, () => { void createSession(customerId); });
   } finally {
     setBusy(null);
@@ -256,6 +312,7 @@ async function openSession(id: string): Promise<void> {
     state.activeId = session.id;
     state.selectedTurnId = session.turns.at(-1)?.id ?? null;
     dom.customerSelect.value = session.customer.id;
+    knowledge.setSession(session, state.customers, session.customer.id);
     showCustomerOrders();
     selectPanel('conversation');
     renderAll(true);
@@ -275,14 +332,26 @@ async function sendMessage(): Promise<void> {
   if (!message) return;
   session.draft = dom.input.value;
   session.sendError = undefined;
+  if (session.taskMode === 'research' && (!state.catalog?.capabilities.research || !session.snapshotId)) {
+    session.sendError = new ApiError('RESEARCH_UNAVAILABLE', '资料研究当前不可用，请检查研究状态和已发布资料版本。');
+    renderMessageFeedback();
+    return;
+  }
   setBusy('正在请求回复');
   renderMessageFeedback();
   try {
-    const pending = session.pendingRequest?.message === message
-      ? session.pendingRequest
-      : { message, requestId: crypto.randomUUID() };
+    const proposed: PendingRequest = session.taskMode === 'research'
+      ? { kind: 'research', message, requestId: crypto.randomUUID(), mode: session.researchMode, snapshotId: session.snapshotId! }
+      : { kind: 'support', message, requestId: crypto.randomUUID() };
+    const previous = session.pendingRequest;
+    const sameContext = previous?.kind === proposed.kind && previous.message === message
+      && (previous.kind === 'support'
+        || (proposed.kind === 'research' && previous.mode === proposed.mode && previous.snapshotId === proposed.snapshotId));
+    const pending = sameContext ? previous : proposed;
     session.pendingRequest = pending;
-    const turn = await api.sendTurn(session.id, session.token, pending.message, pending.requestId);
+    const turn = pending.kind === 'research'
+      ? await api.research(session.id, session.token, pending.message, pending.requestId, pending.mode, pending.snapshotId)
+      : await api.sendTurn(session.id, session.token, pending.message, pending.requestId);
     const existing = session.turns.findIndex((entry) => entry.id === turn.id);
     if (existing < 0) session.turns.push(turn);
     else session.turns[existing] = turn;
@@ -343,6 +412,7 @@ function bindScenarios(root: ParentNode): void {
       const session = activeSession();
       if (!session || state.busy || !node.dataset.message) return;
       session.draft = node.dataset.message;
+      session.taskMode = 'support';
       session.sendError = undefined;
       session.pendingRequest = undefined;
       dom.input.value = session.draft;
@@ -383,11 +453,12 @@ async function loadEvaluation(): Promise<void> {
 }
 
 function selectView(view: string): void {
-  if (view !== 'workspace' && view !== 'evaluation') return;
+  if (view !== 'workspace' && view !== 'evaluation' && view !== 'knowledge') return;
   dom.app.dataset.view = view;
   required('#workspace-view').hidden = view !== 'workspace';
   required('#evaluation-view').hidden = view !== 'evaluation';
-  required('#view-title').textContent = view === 'workspace' ? '客服工作台' : '回归评测';
+  required('#knowledge-view').hidden = view !== 'knowledge';
+  required('#view-title').textContent = view === 'workspace' ? '客服工作台' : view === 'knowledge' ? '资料库' : '回归评测';
   document.querySelectorAll<HTMLButtonElement>('.rail-button[data-view]').forEach((node) => {
     const selected = node.dataset.view === view;
     node.classList.toggle('active', selected);
@@ -433,6 +504,49 @@ async function boot(): Promise<void> {
   }
   if (state.ready && !activeSession()) await createSession(state.customers[0].id);
 }
+
+const knowledge = new KnowledgeView({
+  catalogChanged: (catalog) => {
+    state.catalog = catalog;
+    const session = activeSession();
+    if (catalog && session && !session.researchModeSelected && session.pendingRequest?.kind !== 'research') {
+      session.researchMode = catalog.capabilities.research_default_mode;
+    }
+    updateControls();
+  },
+  customerChanged: (id) => { void createSession(id); },
+  researchRequested: (snapshotId) => {
+    const session = activeSession();
+    if (!session) return;
+    session.taskMode = 'research';
+    session.snapshotId = snapshotId;
+    session.pendingRequest = undefined;
+    session.sendError = undefined;
+    selectView('workspace');
+    selectPanel('conversation');
+    renderAll();
+    dom.input.focus();
+  },
+  announce,
+  downloadError: (error) => showGlobalError(error),
+});
+
+function changeResearchSelection(event: Event): void {
+  const session = activeSession();
+  if (!session) return;
+  session.taskMode = dom.taskMode.value as 'support' | 'research';
+  session.researchMode = dom.researchMode.value as ResearchMode;
+  if (event.currentTarget === dom.researchMode) session.researchModeSelected = true;
+  session.snapshotId = dom.researchSnapshot.value || null;
+  session.pendingRequest = undefined;
+  session.sendError = undefined;
+  renderMessageFeedback();
+  updateControls();
+}
+
+dom.taskMode.addEventListener('change', changeResearchSelection);
+dom.researchMode.addEventListener('change', changeResearchSelection);
+dom.researchSnapshot.addEventListener('change', changeResearchSelection);
 
 dom.form.addEventListener('submit', (event) => {
   event.preventDefault();

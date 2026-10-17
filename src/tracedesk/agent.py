@@ -8,6 +8,7 @@ from typing import Any
 from uuid import uuid4
 
 from .errors import DomainError
+from .knowledge_workflows import KnowledgeWorkflows, ResearchRequest
 from .provider import ModelProvider
 from .refunds import RefundService
 from .retrieval import KnowledgeBase
@@ -47,17 +48,34 @@ class SupportAgent:
         refunds: RefundService,
         settings: Settings,
         provider: ModelProvider | None = None,
+        research: KnowledgeWorkflows | None = None,
     ) -> None:
         if settings.provider == "llm" and provider is None:
             raise ValueError("模型模式必须提供模型适配器。")
         self.store, self.knowledge, self.refunds = store, knowledge, refunds
         self.settings, self.provider = settings, provider
+        self.research = research
 
-    async def ask(self, session: dict[str, Any], message: str, request_id: str) -> dict[str, Any]:
+    async def ask(
+        self,
+        session: dict[str, Any],
+        message: str,
+        request_id: str,
+        *,
+        research: ResearchRequest | None = None,
+    ) -> dict[str, Any]:
         message = message.strip()
         if not message or len(message) > self.settings.max_message_chars:
             raise DomainError("INVALID_MESSAGE", "消息为空或超过配置的长度限制。", 422)
-        run = self.store.start_run(session, message, request_id, self.settings.provider)
+        runtime = research.runtime if research is not None else self.settings.provider
+        request_context = (
+            {"research_mode": research.mode, "snapshot_id": research.snapshot_id}
+            if research is not None
+            else None
+        )
+        run = self.store.start_run(
+            session, message, request_id, runtime, request_context=request_context
+        )
         if run["replayed"]:
             if run.get("error"):
                 raise self._restore_error(run["error"], run["id"])
@@ -75,7 +93,11 @@ class SupportAgent:
             started,
         )
         try:
-            if self.settings.provider == "llm":
+            if research is not None:
+                if self.research is None:
+                    raise DomainError("SERVICE_NOT_CONFIGURED", "资料研究服务尚未启用。", 503)
+                executor.final = await self.research.answer(session, message, trace, research)
+            elif self.settings.provider == "llm":
                 await self._model_turn(executor, message)
             else:
                 self._extractive_turn(executor, message)
@@ -86,7 +108,7 @@ class SupportAgent:
                 "run_id": run["id"],
                 "request_id": request_id,
                 "message": message,
-                "runtime": self.settings.provider,
+                "runtime": runtime,
                 **executor.final,
                 "order": {
                     key: executor.order[key]
