@@ -164,6 +164,7 @@ jobs:
         run: |
           python -m venv "${RUNNER_TEMP}/graphrag-api-env"
           "${RUNNER_TEMP}/graphrag-api-env/bin/python" -I -m pip install -e ".[graphrag]"
+          "${RUNNER_TEMP}/graphrag-api-env/bin/python" -I -m pip check
       - name: Import official APIs and bind the adapter call signatures without model calls
         shell: bash
         run: |
@@ -173,6 +174,9 @@ jobs:
           from importlib.metadata import version
           from pathlib import Path
 
+          import numpy as np
+          import pyarrow as pa
+          import pyarrow.parquet as pq
           from graphrag.api.index import build_index
           from graphrag.api.query import global_search, local_search
           from graphrag.config.create_graphrag_config import create_graphrag_config
@@ -180,6 +184,12 @@ jobs:
 
           actual = version("graphrag")
           assert actual == SUPPORTED_GRAPHRAG_VERSION
+          values = np.array([1, 2, 3], dtype=np.int64)
+          assert pa.array(values).to_pylist() == [1, 2, 3]
+          table = pa.table({"value": values})
+          sink = pa.BufferOutputStream()
+          pq.write_table(table, sink)
+          assert pq.read_table(pa.BufferReader(sink.getvalue())).to_pydict() == {"value": [1, 2, 3]}
           common = dict(config=None, entities=None, communities=None, community_reports=None,
                         community_level=2, response_type="Multiple Paragraphs", query="API signature probe")
           calls = [
@@ -196,7 +206,9 @@ jobs:
               checked.append(function.__name__)
           report = dict(status="passed", package="graphrag", version=actual,
                         scope="Official package import and signature binding only",
-                        checked_apis=checked, model_calls=0, index_build="not_run", quality="not_measured")
+                        checked_apis=checked, model_calls=0, index_build="not_run", quality="not_measured",
+                        dependency_versions={name: version(name) for name in ("numpy", "pyarrow", "lancedb")},
+                        numpy_arrow_roundtrip="passed", parquet_roundtrip="passed")
           output = Path("reports/graphrag-compatibility.json")
           output.parent.mkdir(parents=True, exist_ok=True)
           output.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")

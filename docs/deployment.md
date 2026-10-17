@@ -171,6 +171,8 @@ Neo4j 驱动与数据库服务分别安装。启用时需设置 `TRACEDESK_GRAPH
 
 适配只接受官方 `graphrag==2.7.0`，其 Python 范围为 3.10–3.12。建议为包含该组件的服务建立专用虚拟环境，并确认目标平台能安装其完整依赖；无需为基础功能启用这一组件。
 
+该组件的 NumPy 1.x 依赖与 PyArrow 26 不兼容，`graphrag` extra 已将 PyArrow 限制为 `>=17,<26`。CI 同时检查官方 API 导入、NumPy / Arrow 转换和 Parquet 读写。
+
 在实际运行 TraceDesk 的同一个 Python 环境中安装并初始化：
 
 ```powershell
